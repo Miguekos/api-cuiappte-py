@@ -6,6 +6,6 @@ COPY . /app
 
 RUN pip install -r requeriment.txt
 
-EXPOSE 5000
+EXPOSE 9876
 
 CMD [ "python" , "main.py" ]
