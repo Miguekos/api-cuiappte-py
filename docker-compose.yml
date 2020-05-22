@@ -1,11 +1,12 @@
-version: "3"
-
+# docker-compose.yml
+version: "2"
 services:
-  app:
-    build:
-      dockerfile: Dockerfile
-      context: .
+  api_cuidappte:
+    container_name: api_cuidappte
+    image: api_cuidappte:1.0
+    # build: .
+    command: python3 main.py
+    # volumes:
+    #   - ./:/code/
     ports:
-      - 9876:9876
-    volumes:
-      - ./:/app/
+      - "9876:9876"
