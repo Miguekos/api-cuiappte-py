@@ -6,26 +6,43 @@ import json
 from bson.json_util import dumps
 from bson.objectid import ObjectId
 from flask_cors import CORS
+
+import pytz
+from datetime import datetime
+
 CORS(app, supports_credentials=True)
+
 
 # Rutas User
 @app.route('/user/add', methods=['POST'])
 def add_user():
+    lima = pytz.timezone('America/Lima')
+    li_time = datetime.now(lima)
     _json = request.json
     _name = _json['name']
+    _telefono = _json['telefono']
     _email = _json['email']
-    _password = _json['pwd']
+    _dni = _json['dni']
+    _profile = ''
+    global _password
+    # _password = _json['pwd']
+    _password = 'secret'
+    # if len(_password) == 0:
+    #     _password = 'secret'
+    # else:
+    #     _password = _json['pwd']
     # validate the received values
     if _name and _email and _password and request.method == 'POST':
         # do not save password as a plain text
         _hashed_password = generate_password_hash(_password)
         # save details
-        id = mongo.db.user.insert({'name': _name, 'email': _email, 'pwd': _hashed_password})
+        id = mongo.db.user.insert({'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile, 'pwd': _hashed_password , "created_at": li_time})
         resp = jsonify('User added successfully!')
         resp.status_code = 200
         return resp
     else:
         return not_found()
+
 
 @app.route('/login', methods=["POST"])
 def login():
@@ -43,8 +60,8 @@ def login():
                 print(idUser)
                 jsonFinal = {
                     "codRes": "00",
-                    "id" : idUser,
-                    "name" : _user['name'],
+                    "id": idUser,
+                    "name": _user['name'],
                     "email": _user['email']
                 }
                 return dumps(jsonFinal)
@@ -66,12 +83,13 @@ def login():
             return resp
     except:
         jsonFinal = {
-            "codRes" : "99",
-            "message" : "ErrorControlado"
+            "codRes": "99",
+            "message": "ErrorControlado"
         }
         resp = jsonify(jsonFinal)
         resp.status_code = 200
         return resp
+
 
 @app.route('/user/users')
 def users():
@@ -93,6 +111,9 @@ def update_user():
     _id = _json['_id']
     _name = _json['name']
     _email = _json['email']
+    _telefono = _json['telefono']
+    _dni = _json['dni']
+    _profile = ''
     _password = _json['pwd']
     # validate the received values
     if _name and _email and _password and _id and request.method == 'PUT':
@@ -100,7 +121,7 @@ def update_user():
         _hashed_password = generate_password_hash(_password)
         # save edits
         mongo.db.user.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
-                                     {'$set': {'name': _name, 'email': _email, 'pwd': _hashed_password}})
+                                 {'$set': {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile, 'pwd': _hashed_password}})
         resp = jsonify('User updated successfully!')
         resp.status_code = 200
         return resp
@@ -114,6 +135,7 @@ def delete_user(id):
     resp = jsonify('User deleted successfully!')
     resp.status_code = 200
     return resp
+
 
 @app.errorhandler(404)
 def not_found(error=None):
