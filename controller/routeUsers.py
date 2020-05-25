@@ -23,6 +23,8 @@ def add_user():
     _telefono = _json['telefono']
     _email = _json['email']
     _dni = _json['dni']
+    _url = 'https://api.apps.com.pe/uploads/'
+    _role = ''
     _profile = ''
     global _password
     # _password = _json['pwd']
@@ -36,7 +38,9 @@ def add_user():
         # do not save password as a plain text
         _hashed_password = generate_password_hash(_password)
         # save details
-        id = mongo.db.user.insert({'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile, 'pwd': _hashed_password , "created_at": li_time})
+        id = mongo.db.user.insert(
+            {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile, 'url': _url, 'role': _role,
+             'pwd': _hashed_password, "created_at": li_time})
         resp = jsonify('User added successfully!')
         resp.status_code = 200
         return resp
@@ -100,8 +104,24 @@ def users():
 
 @app.route('/user/<id>')
 def user(id):
+    print(id)
     user = mongo.db.user.find_one({'_id': ObjectId(id)})
+    # print(list(user))
     resp = dumps(user)
+    return resp
+
+
+@app.route('/user/updateImage', methods=['PUT'])
+def update_user_updateImage():
+    _json = request.json
+    _id = _json['_id']
+    _profile = _json['profile']
+    # validate the received values
+    # save edits
+    mongo.db.user.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+                             {'$set': {'profile': _profile}})
+    resp = jsonify('User updated successfully!')
+    resp.status_code = 200
     return resp
 
 
@@ -116,12 +136,18 @@ def update_user():
     _profile = ''
     _password = _json['pwd']
     # validate the received values
-    if _name and _email and _password and _id and request.method == 'PUT':
+    if _name and _email and _id and request.method == 'PUT':
         # do not save password as a plain text
-        _hashed_password = generate_password_hash(_password)
+        global jsonUpdate, _hashed_password
+        if len(_password) == 0:
+            jsonUpdate = {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile}
+        else:
+            _hashed_password = generate_password_hash(_password)
+            jsonUpdate = {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile,
+                          'pwd': _hashed_password}
         # save edits
         mongo.db.user.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
-                                 {'$set': {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile, 'pwd': _hashed_password}})
+                                 {'$set': jsonUpdate})
         resp = jsonify('User updated successfully!')
         resp.status_code = 200
         return resp

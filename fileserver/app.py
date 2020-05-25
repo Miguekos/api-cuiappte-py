@@ -10,7 +10,7 @@ CORS(app, supports_credentials=True)
 # app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPEG", "JPG", "PNG", "GIF"]
 # app.config["MAX_IMAGE_FILESIZE"] = 0.5 * 1024 * 1024
 
-UPLOAD_FOLDER = 'd:\\images\\'
+UPLOAD_FOLDER = 'fileserver'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
