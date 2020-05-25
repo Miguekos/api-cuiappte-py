@@ -24,8 +24,8 @@ def add_user():
     _email = _json['email']
     _dni = _json['dni']
     _url = 'https://api.apps.com.pe/uploads/'
-    _role = ''
-    _profile = ''
+    _role = _json['role']
+    _profile = 'boy-avatar.png'
     global _password
     # _password = _json['pwd']
     _password = 'secret'
@@ -66,7 +66,10 @@ def login():
                     "codRes": "00",
                     "id": idUser,
                     "name": _user['name'],
-                    "email": _user['email']
+                    "email": _user['email'],
+                    "url": _user['url'],
+                    "profile": _user['profile'],
+                    "role": _user['role']
                 }
                 return dumps(jsonFinal)
             else:
