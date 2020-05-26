@@ -113,26 +113,29 @@ def clients():
 
 @app.route('/cliente/<id>')
 def client(id):
-    user = mongo.db.clientes.find_one({'_id': ObjectId(id)})
+    user = mongo.db.clientes.find({'dni': id})
     resp = dumps(user)
     return resp
 
 
-@app.route('/cliente/update/<id>', methods=['PUT'])
-def update_client(id):
+@app.route('/cliente/update', methods=['POST'])
+def update_client():
     _json = request.json
-    # _id = _json['_id']
+    print(_json)
+    # _id = id
+    _temp = _json['temp']
+    _id = _json['_id']
     # _name = _json['name']
     # _email = _json['email']
     # _password = _json['pwd']
     # validate the received values
     # if _name and _email and _password and _id and request.method == 'PUT':
-    asd = {'_id': ObjectId("{}".format(id))}
-    print(asd)
+    # asd = {'_id': ObjectId("{}".format(id))}
+    # print(asd)
     # do not save password as a plain text
     # save edits
-    mongo.db.clientes.update_one({'_id': ObjectId("{}".format(id))},
-                                 {'$set': _json})
+    mongo.db.clientes.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+                                 {'$set': {'temp': _temp}})
     resp = jsonify('User updated successfully!')
     resp.status_code = 200
     return resp
