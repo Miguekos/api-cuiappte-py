@@ -7,6 +7,6 @@ services:
     # build: .
     command: python3 main.py
     volumes:
-      - /usr/local/volumes/fileserver:/app/fileserver
+      - /usr/local/volumes/fileserver/:/app/fileserver/
     ports:
       - "9876:9876"
