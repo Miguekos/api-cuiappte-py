@@ -6,7 +6,7 @@ services:
     image: api_cuidappte:1.0
     # build: .
     command: python3 main.py
-    # volumes:
-    #   - ./:/code/
+     volumes:
+       - /usr/local/volumes/fileserver:/app/fileserver
     ports:
       - "9876:9876"
