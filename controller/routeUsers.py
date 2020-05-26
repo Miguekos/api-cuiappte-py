@@ -23,8 +23,10 @@ def add_user():
     _telefono = _json['telefono']
     _email = _json['email']
     _dni = _json['dni']
+    _area = _json['area']
     _url = 'https://api.apps.com.pe/uploads/'
     _role = _json['role']
+    _temp = _json['temp']
     _profile = 'boy-avatar.png'
     global _password
     # _password = _json['pwd']
@@ -39,7 +41,8 @@ def add_user():
         _hashed_password = generate_password_hash(_password)
         # save details
         id = mongo.db.user.insert(
-            {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile, 'url': _url, 'role': _role,
+            {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile, 'url': _url,
+             'role': _role, 'area': _area, 'temp': _temp,
              'pwd': _hashed_password, "created_at": li_time})
         resp = jsonify('User added successfully!')
         resp.status_code = 200
@@ -67,9 +70,13 @@ def login():
                     "id": idUser,
                     "name": _user['name'],
                     "email": _user['email'],
+                    "dni": _user['dni'],
+                    "telefono": _user['telefono'],
                     "url": _user['url'],
                     "profile": _user['profile'],
-                    "role": _user['role']
+                    "area": _user['area'],
+                    "role": _user['role'],
+                    "temp": _user['temp']
                 }
                 return dumps(jsonFinal)
             else:
@@ -88,14 +95,15 @@ def login():
             resp = jsonify(jsonFinal)
             resp.status_code = 200
             return resp
-    except:
-        jsonFinal = {
-            "codRes": "99",
-            "message": "ErrorControlado"
-        }
-        resp = jsonify(jsonFinal)
-        resp.status_code = 200
-        return resp
+    except ValueError:
+        print(ValueError)
+        # jsonFinal = {
+        #     "codRes": "99",
+        #     "message": "ErrorControlado"
+        # }
+        # resp = jsonify(jsonFinal)
+        # resp.status_code = 200
+        # return resp
 
 
 @app.route('/user/users')
@@ -111,6 +119,20 @@ def user(id):
     user = mongo.db.user.find_one({'_id': ObjectId(id)})
     # print(list(user))
     resp = dumps(user)
+    return resp
+
+
+@app.route('/user/temp', methods=['PUT'])
+def update_user_temp():
+    _json = request.json
+    _id = _json['_id']
+    _temp = _json['temp']
+    # validate the received values
+    # save edits
+    mongo.db.user.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+                             {'$set': {'temp': _temp}})
+    resp = jsonify('User updated successfully!')
+    resp.status_code = 200
     return resp
 
 
