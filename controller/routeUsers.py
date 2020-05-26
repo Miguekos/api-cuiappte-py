@@ -40,13 +40,33 @@ def add_user():
         # do not save password as a plain text
         _hashed_password = generate_password_hash(_password)
         # save details
-        id = mongo.db.user.insert(
-            {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile, 'url': _url,
-             'role': _role, 'area': _area, 'temp': _temp,
-             'pwd': _hashed_password, "created_at": li_time})
-        resp = jsonify('User added successfully!')
-        resp.status_code = 200
-        return resp
+        try:
+            id = mongo.db.user.insert(
+                {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile, 'url': _url,
+                 'role': _role, 'area': _area, 'temp': _temp,
+                 'pwd': _hashed_password, "created_at": li_time})
+            resp = jsonify('User added successfully!')
+            resp.status_code = 200
+            return resp
+        except:
+            user = mongo.db.user.find_one({"dni" : _json['dni']})
+            # userd = list(user)
+            userd = dict(user)
+            # print(dumps(userd))
+            # return dumps(userd)
+            # return [dict(mongo.db.user.find_one({"dni" : _json['dni']}))]
+            if (userd):
+                jsonResp = {
+                    "codRes": "02",
+                    "message": "{}".format(userd)
+                }
+                return dumps(jsonResp)
+            else:
+                jsonResp = {
+                    "codRes" : "99",
+                    "message" : "{}".format(userd)
+                }
+                return jsonify(jsonResp)
     else:
         return not_found()
 
