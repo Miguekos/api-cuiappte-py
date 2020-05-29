@@ -49,3 +49,6 @@ def noSunday(fechaCredito, cuotasTotales, cuotasPagadas):
     # print(*daterange[-cuotasPagadas:], sep='\n')
 
 # noSunday("2020-04-09 16:31:58.612919", 24, 8)
+
+def armarGrafica(arg):
+    return arg

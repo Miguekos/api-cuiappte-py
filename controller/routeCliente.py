@@ -6,7 +6,7 @@ from bson.json_util import dumps
 from bson.objectid import ObjectId
 from flask_cors import CORS
 import pytz
-from datetime import datetime
+from datetime import datetime, timedelta
 
 CORS(app, supports_credentials=True)
 
@@ -67,6 +67,104 @@ def add_client():
             return jsonify(jsonResp)
 
 
+def FechaTodo():
+    now = datetime.now()
+    fechax = (now - timedelta(days=5))
+    fechaa = (now - timedelta(days=4))
+    fechab = (now - timedelta(days=3))
+    fechac = (now - timedelta(days=2))
+    fechad = (now - timedelta(days=1))
+    fechae = (now - timedelta(days=0))
+    graficDate = []
+    graficDate.append(fechax.strftime('%m-%d'))
+    graficDate.append(fechaa.strftime('%m-%d'))
+    graficDate.append(fechab.strftime('%m-%d'))
+    graficDate.append(fechac.strftime('%m-%d'))
+    graficDate.append(fechad.strftime('%m-%d'))
+    graficDate.append(fechae.strftime('%m-%d'))
+    return graficDate
+
+def CalcuarTodo(arg):
+    now = datetime.now()
+    from_date_x = []
+    from_date_1 = []
+    from_date_2 = []
+    from_date_3 = []
+    from_date_4 = []
+    from_date_5 = []
+    fechax = (now - timedelta(days=5))
+    fechaa = (now - timedelta(days=4))
+    fechab = (now - timedelta(days=3))
+    fechac = (now - timedelta(days=2))
+    fechad = (now - timedelta(days=1))
+    fechae = (now - timedelta(days=0))
+    # AllClientes = mongo.db.clientes.find()
+    for post in arg:
+        # from_date.append(post['created_at'].strftime("%Y-%m-%d"))
+        # to_date.append(post['created_at'].strftime("%Y-%m-%d"))
+        # print(post['created_at'].strftime("%Y-%m-%d"))
+        # print(now.strftime("%Y-%m-%d"))
+        # print(post['created_at'])
+        fehcaEvaluar = post['created_at'] - timedelta(hours=5)
+        if fehcaEvaluar.strftime("%Y-%m-%d") == fechax.strftime("%Y-%m-%d"):
+            from_date_x.append(fehcaEvaluar.strftime("%Y-%m-%d"))
+            # print("hoy")
+            # print(fehcaEvaluar.strftime(
+
+        elif fehcaEvaluar.strftime("%Y-%m-%d") == fechaa.strftime("%Y-%m-%d"):
+            from_date_1.append(fehcaEvaluar.strftime("%Y-%m-%d"))
+            # print("hoy - 1")
+            # print(fehcaEvaluar.strftime(
+
+        elif fehcaEvaluar.strftime("%Y-%m-%d") == fechab.strftime("%Y-%m-%d"):
+            from_date_2.append(fehcaEvaluar.strftime("%Y-%m-%d"))
+            # print("hoy - 2")
+            # print(fehcaEvaluar.strftime(
+
+        elif fehcaEvaluar.strftime("%Y-%m-%d") == fechac.strftime("%Y-%m-%d"):
+            from_date_3.append(fehcaEvaluar.strftime("%Y-%m-%d"))
+            # print("hoy - 3")
+            # print(fehcaEvaluar.strftime(
+
+        elif fehcaEvaluar.strftime("%Y-%m-%d") == fechad.strftime("%Y-%m-%d"):
+            from_date_4.append(fehcaEvaluar.strftime("%Y-%m-%d"))
+            # print("hoy - 4")
+            # print(fehcaEvaluar.strftime(
+
+        elif fehcaEvaluar.strftime("%Y-%m-%d") == fechae.strftime("%Y-%m-%d"):
+            from_date_5.append(fehcaEvaluar.strftime("%Y-%m-%d"))
+            # print("hoy - 5")
+
+    print(from_date_x)
+    print(from_date_1)
+    print(from_date_2)
+    print(from_date_3)
+    print(from_date_4)
+    print(from_date_5)
+    graficSeria = []
+    graficDate = []
+    graficSeria.append(len(from_date_x))
+    graficSeria.append(len(from_date_1))
+    graficSeria.append(len(from_date_2))
+    graficSeria.append(len(from_date_3))
+    graficSeria.append(len(from_date_4))
+    graficSeria.append(len(from_date_5))
+
+    graficDate.append(fechax.strftime('%m-%d'))
+    graficDate.append(fechaa.strftime('%m-%d'))
+    graficDate.append(fechab.strftime('%m-%d'))
+    graficDate.append(fechac.strftime('%m-%d'))
+    graficDate.append(fechad.strftime('%m-%d'))
+    graficDate.append(fechae.strftime('%m-%d'))
+
+    # jsonRsult = {
+    #     "asd" : graficSeria,
+    #     "qwe" : graficDate
+    # }
+    return graficSeria
+
+
+
 @app.route('/clientes/reporte')
 def clientsReporte():
     clientes = mongo.db.clientes.count()
@@ -77,6 +175,113 @@ def clientsReporte():
     clientesC3 = mongo.db.clientes.count({"area": "Administración"})
     clientesC4 = mongo.db.clientes.count({"area": "Gerencia"})
 
+    # now = datetime.now()
+    # from_date_x = []
+    # from_date_1 = []
+    # from_date_2 = []
+    # from_date_3 = []
+    # from_date_4 = []
+    # from_date_5 = []
+    # fechax = (now - timedelta(days=0))
+    # fechaa = (now - timedelta(days=1))
+    # fechab = (now - timedelta(days=2))
+    # fechac = (now - timedelta(days=3))
+    # fechad = (now - timedelta(days=4))
+    # fechae = (now - timedelta(days=5))
+    # AllClientes = mongo.db.clientes.find()
+    # print(CalcuarTodo(mongo.db.clientes.find()))
+    # for post in AllClientes:
+    #     # from_date.append(post['created_at'].strftime("%Y-%m-%d"))
+    #     # to_date.append(post['created_at'].strftime("%Y-%m-%d"))
+    #     # print(post['created_at'].strftime("%Y-%m-%d"))
+    #     # print(now.strftime("%Y-%m-%d"))
+    #     # print(post['created_at'])
+    #     fehcaEvaluar = post['created_at'] - timedelta(hours=5)
+    #     if fehcaEvaluar.strftime("%Y-%m-%d") == fechax.strftime("%Y-%m-%d"):
+    #         from_date_x.append(fehcaEvaluar.strftime("%Y-%m-%d"))
+    #         # print("hoy")
+    #         # print(fehcaEvaluar.strftime(
+    #
+    #     elif fehcaEvaluar.strftime("%Y-%m-%d") == fechaa.strftime("%Y-%m-%d"):
+    #         from_date_1.append(fehcaEvaluar.strftime("%Y-%m-%d"))
+    #         # print("hoy - 1")
+    #         # print(fehcaEvaluar.strftime(
+    #
+    #     elif fehcaEvaluar.strftime("%Y-%m-%d") == fechab.strftime("%Y-%m-%d"):
+    #         from_date_2.append(fehcaEvaluar.strftime("%Y-%m-%d"))
+    #         # print("hoy - 2")
+    #         # print(fehcaEvaluar.strftime(
+    #
+    #     elif fehcaEvaluar.strftime("%Y-%m-%d") == fechac.strftime("%Y-%m-%d"):
+    #         from_date_3.append(fehcaEvaluar.strftime("%Y-%m-%d"))
+    #         # print("hoy - 3")
+    #         # print(fehcaEvaluar.strftime(
+    #
+    #     elif fehcaEvaluar.strftime("%Y-%m-%d") == fechad.strftime("%Y-%m-%d"):
+    #         from_date_4.append(fehcaEvaluar.strftime("%Y-%m-%d"))
+    #         # print("hoy - 4")
+    #         # print(fehcaEvaluar.strftime(
+    #
+    #     elif fehcaEvaluar.strftime("%Y-%m-%d") == fechae.strftime("%Y-%m-%d"):
+    #         from_date_5.append(fehcaEvaluar.strftime("%Y-%m-%d"))
+    #         # print("hoy - 5")
+    #
+    # print(from_date_x)
+    # print(from_date_1)
+    # print(from_date_2)
+    # print(from_date_3)
+    # print(from_date_4)
+    # print(from_date_5)
+    # graficSeria = []
+    # graficDate = []
+    # graficSeria.append(len(from_date_x))
+    # graficSeria.append(len(from_date_1))
+    # graficSeria.append(len(from_date_2))
+    # graficSeria.append(len(from_date_3))
+    # graficSeria.append(len(from_date_4))
+    # graficSeria.append(len(from_date_5))
+    #
+    # graficDate.append(fechax.strftime('%m-%d'))
+    # graficDate.append(fechaa.strftime('%m-%d'))
+    # graficDate.append(fechab.strftime('%m-%d'))
+    # graficDate.append(fechac.strftime('%m-%d'))
+    # graficDate.append(fechad.strftime('%m-%d'))
+    # graficDate.append(fechae.strftime('%m-%d'))
+
+
+
+
+
+
+
+    # i = 0
+    # while i > 5:
+    #     graficDate.append(now - timedelta(days=i))
+    # print(from_date_count)
+    # print(from_date_1_count)
+    # print(from_date_2_count)
+    # print(from_date_3_count)
+    # print(from_date_4_count)
+    # print(from_date_5_count)
+    # jsonFechas = {
+    #     "date": from_date_count,
+    #     "date_1": from_date_1_count,
+    #     "date_2": from_date_2_count,
+    #     "date_3": from_date_3_count,
+    #     "date_4": from_date_4_count,
+    #     "date_5": from_date_5_count
+    # }
+    # print(jsonFechas)
+    # print(list(AllClientes['created_at']))
+    # fechaw = from_date[0].strftime("%Y-%m-%d")
+    # print("{}".format(fechaw))
+    # print(to_date[0])
+    # from_date = datetime(2010, 12, 31, 12, 30, 30, 125000)
+    # to_date = datetime(2011, 12, 31, 12, 30, 30, 125000)
+
+    # fechas = mongo.db.clientes.find({"date": {"$gte": from_date[0], "$lt": to_date[0]}})
+    # print(list(fechas))
+    # print(datetime.now())
     # resp = dumps(users)
     resp = jsonify({
         "clientes": clientes,
@@ -85,7 +290,10 @@ def clientsReporte():
         "clientesC1": clientesC1,
         "clientesC2": clientesC2,
         "clientesC3": clientesC3,
-        "clientesC4": clientesC4
+        "clientesC4": clientesC4,
+        "graficSeriaCS": CalcuarTodo(mongo.db.clientes.find({"estados": "01"})),
+        "graficSeriaS" : CalcuarTodo(mongo.db.clientes.find({"estados": "00"})),
+        "graficDate" : FechaTodo()
     })
     return resp
 

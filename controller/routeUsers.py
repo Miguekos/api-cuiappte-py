@@ -76,7 +76,7 @@ def login():
     _json = request.json
     try:
         _user = mongo.db.user.find_one({
-            'email': _json["email"]
+            'email': _json["email"].casefold()
         })
         print("_user", type(_user))
         if _user != None:
