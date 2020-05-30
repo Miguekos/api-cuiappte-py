@@ -68,7 +68,7 @@ def add_client():
 
 
 def FechaTodo():
-    now = datetime.now()
+    now = datetime.now() - - timedelta(hours=5)
     fechax = (now - timedelta(days=5))
     fechaa = (now - timedelta(days=4))
     fechab = (now - timedelta(days=3))
@@ -85,7 +85,7 @@ def FechaTodo():
     return graficDate
 
 def CalcuarTodo(arg):
-    now = datetime.now()
+    now = datetime.now() - timedelta(hours=5)
     from_date_x = []
     from_date_1 = []
     from_date_2 = []
