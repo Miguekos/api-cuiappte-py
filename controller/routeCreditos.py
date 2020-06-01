@@ -26,7 +26,7 @@ def sumalista(listaNumeros):
     return laSuma
 
 
-@app.route('/creditos/add/<id>', methods=['POST'])
+@app.route('/cuidappte/creditos/add/<id>', methods=['POST'])
 def agregardCreditos(id):
     try:
         lima = pytz.timezone('America/Lima')
@@ -60,7 +60,7 @@ def agregardCreditos(id):
         # }
         # return jsonify(jsonResp)
 
-@app.route('/creditos/<id>')
+@app.route('/cuidappte/creditos/<id>')
 def getCrediOne(id):
     print("Consultando Creditos del ID: {}".format(id))
     creditos = mongo.db.creditos.find({'idClient': id})
@@ -77,7 +77,7 @@ def getCrediOne(id):
     # print(resp)
     return resp
 
-@app.route('/creditos/cronograma/<id>')
+@app.route('/cuidappte/creditos/cronograma/<id>')
 def getCrediCronogramaOne(id):
     print("Consultando Creditos del ID: {}".format(id))
     abonos = mongo.db.abonos.find({'idCredito': id})

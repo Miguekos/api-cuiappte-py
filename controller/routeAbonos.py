@@ -14,7 +14,7 @@ CORS(app, supports_credentials=True)
 def montoAbonado(cuotas, importe):
     return cuotas * importe
 
-@app.route('/abonos/add', methods=['POST'])
+@app.route('/cuidappte/abonos/add', methods=['POST'])
 def agregardabonos():
     lima = timezone('America/Lima')
     li_time = datetime.now(lima)
@@ -53,7 +53,7 @@ def agregardabonos():
         # }
         # return jsonify(jsonResp)
 
-@app.route('/abonos')
+@app.route('/cuidappte/abonos')
 def getAbonos():
     print("Consultando Creditos del ID: {}".format(id))
     user = mongo.db.abonos.find()
@@ -70,7 +70,7 @@ def getAbonos():
     # print(asd)
     return resp
 
-@app.route('/abonos/reporte')
+@app.route('/cuidappte/abonos/reporte')
 def getAbonosReporte():
     print("Consultando Creditos del ID: {}".format(id))
     user = mongo.db.abonos.find()
@@ -113,14 +113,14 @@ def getAbonosReporte():
     # print(asd)
     return dumps(val)
 
-@app.route('/abonos/<id>')
+@app.route('/cuidappte/abonos/<id>')
 def getAbonosOne(id):
     print("Consultando Creditos del ID: {}".format(id))
     user = mongo.db.abonos.find({'idClient': id})
     resp = dumps(user)
     return resp
 
-@app.route('/abonos/delete/<id>', methods=['DELETE'])
+@app.route('/cuidappte/abonos/delete/<id>', methods=['DELETE'])
 def deleteAbonosOne(id):
     print("Consultando Creditos del ID: {}".format(id))
     mongo.db.abonos.delete_one({'_id': ObjectId(id)})

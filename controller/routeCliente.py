@@ -16,7 +16,7 @@ def calcuarDeuda(monto, porcent):
 
 
 # Rutas User
-@app.route('/cliente/add', methods=['POST'])
+@app.route('/cuidappte/cliente/add', methods=['POST'])
 def add_client():
     lima = pytz.timezone('America/Lima')
     li_time = datetime.now(lima)
@@ -168,7 +168,7 @@ def CalcuarTodo(arg):
     return graficSeria
 
 
-@app.route('/clientes/reporte')
+@app.route('/cuidappte/clientes/reporte')
 def clientsReporte():
     # clientes = mongo.db.clientes.count()
     # clientesCS = mongo.db.clientes.count({"estados": "01"})
@@ -210,7 +210,7 @@ def clientsReporte():
     return resp
 
 
-@app.route('/clientes/reporte/order')
+@app.route('/cuidappte/clientes/reporte/order')
 def clientsReporteOrder():
     # user = mongo.db.clientes.find()
     agr = [
@@ -287,14 +287,14 @@ def clientsReporteOrder():
     # return resp
 
 
-@app.route('/clientes')
+@app.route('/cuidappte/clientes')
 def clients():
     users = mongo.db.clientes.find()
     resp = dumps(users)
     return resp
 
 
-@app.route('/clientesCS')
+@app.route('/cuidappte/clientesCS')
 def clientsCS():
     users = mongo.db.clientes.find({"estados": "01"})
     respuesta = list(users)
@@ -305,7 +305,7 @@ def clientsCS():
     # return resp
 
 
-@app.route('/clientesS')
+@app.route('/cuidappte/clientesS')
 def clientsS():
     users = mongo.db.clientes.find({"estados": "00"})
     respuesta = list(users)
@@ -313,14 +313,14 @@ def clientsS():
     return dumps(respuesta)
 
 
-@app.route('/cliente/<id>')
+@app.route('/cuidappte/cliente/<id>')
 def client(id):
     user = mongo.db.clientes.find({'dni': id})
     resp = dumps(user)
     return resp
 
 
-@app.route('/cliente/update', methods=['POST'])
+@app.route('/cuidappte/cliente/update', methods=['POST'])
 def update_client():
     _json = request.json
     print(_json)
@@ -345,7 +345,7 @@ def update_client():
     #     return not_found()
 
 
-@app.route('/cliente/delete/<id>', methods=['DELETE'])
+@app.route('/cuidappte/cliente/delete/<id>', methods=['DELETE'])
 def delete_client(id):
     mongo.db.clientes.delete_one({'_id': ObjectId(id)})
     resp = jsonify('User deleted successfully!')

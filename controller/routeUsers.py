@@ -1,5 +1,5 @@
 from app import app
-from flask import jsonify, flash, request
+from flask import jsonify, Blueprint, flash, request, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from mongo import mongo
 import json
@@ -14,12 +14,15 @@ import funciones
 
 CORS(app, supports_credentials=True)
 
+# @app.route("/")
+# def index():
+#     return "The URL for this page is {}".format(url_for("index"))
 
 def random_char(y):
     return ''.join(random.choice(string.ascii_letters) for x in range(y))
 
 # Rutas User
-@app.route('/user/add', methods=['POST'])
+@app.route('/cuidappte/user/add', methods=['POST'])
 def add_user():
     lima = pytz.timezone('America/Lima')
     li_time = datetime.now(lima)
@@ -78,7 +81,7 @@ def add_user():
         return not_found()
 
 
-@app.route('/login', methods=["POST"])
+@app.route('/cuidappte/login', methods=["POST"])
 def login():
     _json = request.json
     try:
@@ -135,14 +138,14 @@ def login():
         # return resp
 
 
-@app.route('/user/users')
+@app.route('/cuidappte/user/users')
 def users():
     users = mongo.db.user.find()
     resp = dumps(users)
     return resp
 
 
-@app.route('/user/<id>')
+@app.route('/cuidappte/user/<id>')
 def user(id):
     print(id)
     user = mongo.db.user.find_one({'_id': ObjectId(id)})
@@ -151,7 +154,7 @@ def user(id):
     return resp
 
 
-@app.route('/user/temp', methods=['PUT'])
+@app.route('/cuidappte/user/temp', methods=['PUT'])
 def update_user_temp():
     _json = request.json
     _id = _json['_id']
@@ -165,7 +168,7 @@ def update_user_temp():
     return resp
 
 
-@app.route('/user/updateImage', methods=['PUT'])
+@app.route('/cuidappte/user/updateImage', methods=['PUT'])
 def update_user_updateImage():
     _json = request.json
     _id = _json['_id']
@@ -179,7 +182,7 @@ def update_user_updateImage():
     return resp
 
 
-@app.route('/user/update', methods=['PUT'])
+@app.route('/cuidappte/user/update', methods=['PUT'])
 def update_user():
     _json = request.json
     _id = _json['_id']
@@ -209,7 +212,7 @@ def update_user():
         return not_found()
 
 
-@app.route('/user/recuperar', methods=['PUT'])
+@app.route('/cuidappte/user/recuperar', methods=['PUT'])
 def recuperar_user():
     _json = request.json
     emailCustom = _json["email"].casefold()
@@ -244,7 +247,7 @@ def recuperar_user():
         }
         return jsonify(jsonResp)
 
-@app.route('/user/delete/<id>', methods=['DELETE'])
+@app.route('/cuidappte/user/delete/<id>', methods=['DELETE'])
 def delete_user(id):
     mongo.db.user.delete_one({'_id': ObjectId(id)})
     resp = jsonify('User deleted successfully!')
