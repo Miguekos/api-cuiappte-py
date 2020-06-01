@@ -288,24 +288,29 @@ def clientsReporteOrder():
 
 
 @app.route('/clientes')
-def clientsCS():
+def clients():
     users = mongo.db.clientes.find()
     resp = dumps(users)
     return resp
 
 
 @app.route('/clientesCS')
-def clientsS():
+def clientsCS():
     users = mongo.db.clientes.find({"estados": "01"})
-    resp = dumps(users)
-    return resp
+    respuesta = list(users)
+    print(len(respuesta))
+    return dumps(respuesta)
+    # resp = list(users)
+    # print(resp)
+    # return resp
 
 
 @app.route('/clientesS')
-def clients():
+def clientsS():
     users = mongo.db.clientes.find({"estados": "00"})
-    resp = dumps(users)
-    return resp
+    respuesta = list(users)
+    print(len(respuesta))
+    return dumps(respuesta)
 
 
 @app.route('/cliente/<id>')

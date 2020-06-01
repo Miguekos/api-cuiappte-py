@@ -1,8 +1,8 @@
 FROM python:3.6
 
-WORKDIR /app
-
 COPY . /app
+
+WORKDIR /app
 
 RUN pip install -r requeriment.txt
 

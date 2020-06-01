@@ -6,12 +6,17 @@ import json
 from bson.json_util import dumps
 from bson.objectid import ObjectId
 from flask_cors import CORS
-
 import pytz
 from datetime import datetime
+import random
+import string
+import funciones
 
 CORS(app, supports_credentials=True)
 
+
+def random_char(y):
+    return ''.join(random.choice(string.ascii_letters) for x in range(y))
 
 # Rutas User
 @app.route('/user/add', methods=['POST'])
@@ -30,17 +35,19 @@ def add_user():
     _profile = 'boy-avatar.png'
     global _password
     # _password = _json['pwd']
-    _password = 'secret'
+    _password = random_char(6)
     # if len(_password) == 0:
     #     _password = 'secret'
     # else:
     #     _password = _json['pwd']
     # validate the received values
     if _name and _email and _password and request.method == 'POST':
+
         # do not save password as a plain text
         _hashed_password = generate_password_hash(_password)
         # save details
         try:
+            funciones.enviarCorreo(_email, _name, _password)
             id = mongo.db.user.insert(
                 {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile, 'url': _url,
                  'role': _role, 'area': _area, 'temp': _temp,
@@ -75,8 +82,10 @@ def add_user():
 def login():
     _json = request.json
     try:
+        emailCustom = _json["email"].casefold()
+        emailCustom = emailCustom.strip()
         _user = mongo.db.user.find_one({
-            'email': _json["email"].casefold()
+            'email': emailCustom
         })
         print("_user", type(_user))
         if _user != None:
@@ -199,6 +208,41 @@ def update_user():
     else:
         return not_found()
 
+
+@app.route('/user/recuperar', methods=['PUT'])
+def recuperar_user():
+    _json = request.json
+    emailCustom = _json["email"].casefold()
+    emailCustom = emailCustom.strip()
+    buscarCliente = mongo.db.user.find_one({'email': emailCustom})
+    try:
+        buscarCliente = dict(buscarCliente)
+        print(buscarCliente)
+        # return jsonify("Tu correo existe")
+        # validate the received values
+        _password = random_char(6)
+        # do not save password as a plain text
+        try:
+            funciones.enviarCorreo(emailCustom, buscarCliente['name'], _password)
+            global jsonUpdate, _hashed_password
+            _hashed_password = generate_password_hash(_password)
+            jsonUpdate = {'pwd': _hashed_password}
+            # save edits
+            mongo.db.user.update_one({'email': emailCustom},
+                                     {'$set': jsonUpdate})
+            resp = {
+                "codRes": "00",
+                "message": "{}".format("Pass generada correctamente")
+            }
+            return jsonify(resp)
+        except:
+            return jsonify("No se pudo generar el nuevo pass")
+    except:
+        jsonResp = {
+            "codRes" : "01",
+            "message" : "{}".format("Correo no existe")
+        }
+        return jsonify(jsonResp)
 
 @app.route('/user/delete/<id>', methods=['DELETE'])
 def delete_user(id):
