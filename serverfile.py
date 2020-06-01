@@ -15,7 +15,7 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@app.route('/cuidappte/uploads/<filename>')
+@app.route('/fileserver/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                filename)
@@ -24,7 +24,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/cuidappte/fileupload', methods=['POST'])
+@app.route('/fileserver/fileupload', methods=['POST'])
 def upload_file():
     if request.method == 'POST':
         print(request.files)
