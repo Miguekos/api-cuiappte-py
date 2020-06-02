@@ -68,7 +68,10 @@ def add_client():
 
 
 def FechaTodo():
-    now = datetime.now()
+    lima = pytz.timezone('America/Lima')
+    now = datetime.now(lima)
+    print("FechaTodo", now)
+    _json = request.json
     # print("FechaTodo", now)
     fechax = (now - timedelta(days=5))
     fechaa = (now - timedelta(days=4))
@@ -88,7 +91,10 @@ def FechaTodo():
 
 def CalcuarTodo(arg):
     # print(arg)
-    now = datetime.now()
+    lima = pytz.timezone('America/Lima')
+    now = datetime.now(lima)
+    print(datetime.now())
+    print("CalcuarTodo", now)
     # print("CalcuarTodo", now)
     from_date_x = []
     from_date_1 = []
@@ -108,8 +114,15 @@ def CalcuarTodo(arg):
         # to_date.append(post['created_at'].strftime("%Y-%m-%d"))
         # print(post['created_at'].strftime("%Y-%m-%d"))
         # print(now.strftime("%Y-%m-%d"))
-        fehcaEvaluar = post['created_at'] - timedelta(hours=5)
+        # fehcaEvaluar = post['created_at'] - timedelta(hours=5)
+        fehcaEvaluarTest = post['created_at']
+        # tz = pytz.timezone('America/St_Johns')
+        fehcaEvaluarTest = fehcaEvaluarTest.replace(tzinfo=pytz.UTC)
+        fehcaEvaluar = fehcaEvaluarTest.astimezone(lima)
+        print(fehcaEvaluar)
+        # print(datetime(fehcaEvaluarTest, tzinfo=lima).strftime("%Y-%m-%d"))
         # print(fehcaEvaluar)
+        # print(post['_id'])
         if fehcaEvaluar.strftime("%Y-%m-%d") == fechax.strftime("%Y-%m-%d"):
             from_date_x.append(fehcaEvaluar.strftime("%Y-%m-%d"))
             # print("hoy")
