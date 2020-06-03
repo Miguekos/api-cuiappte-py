@@ -409,7 +409,7 @@ def enviarCorreo(correofrom, nombre, clave):
     	      </tr><!-- end tr -->
     	      <tr>
               <td valign="middle" class="hero bg_white" style="padding: 0 0 0 0;">
-                <img src="https://api.apps.com.pe/uploads/corazonlogo.png" alt="" style="width: 300px; max-width: 600px; height: auto; margin: auto; display: block;">
+                <img src="https://api.apps.com.pe/fileserver/uploads/corazonlogo.png" alt="" style="width: 300px; max-width: 600px; height: auto; margin: auto; display: block;">
               </td>
     	      </tr><!-- end tr -->
     				<tr>
