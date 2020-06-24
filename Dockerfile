@@ -6,6 +6,6 @@ WORKDIR /app
 
 RUN pip install -r requeriment.txt
 
-EXPOSE 9877
+EXPOSE 9878
 
 CMD [ "python" , "main.py" ]

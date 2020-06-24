@@ -28,4 +28,4 @@ date_time = li_time.strftime('%d/%m/%Y')
 # print("{} {}".format(date_time, time_hora_new))
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="9877", debug=True)
+    app.run(host="0.0.0.0", port="9878", debug=True)
