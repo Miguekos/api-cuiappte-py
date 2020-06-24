@@ -1,9 +1,9 @@
 # docker-compose.yml
 version: "2"
 services:
-  api_cayman:
-    container_name: api_cayman
-#    image: api_cayman:1.0
+  api_tcomp:
+    container_name: api_tcomp
+#    image: api_tcomp:1.0
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,4 +11,4 @@ services:
     volumes:
       - /usr/local/volumes/fileserver/:/app/fileserver/
     ports:
-      - "9878:9878"
+      - "9879:9879"
