@@ -190,7 +190,7 @@ def update_user():
     _email = _json['email']
     _telefono = _json['telefono']
     _dni = _json['dni']
-    _profile = ''
+    _profile = _json['profile']
     _password = _json['pwd']
     # validate the received values
     if _name and _email and _id and request.method == 'PUT':
