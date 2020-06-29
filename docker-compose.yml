@@ -3,8 +3,11 @@ version: "2"
 services:
   api_cuidappte:
     container_name: api_cuidappte
-    image: api_cuidappte:1.0
+    #    image: api_cuidappte:1.0
     # build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: python3 main.py
     volumes:
       - /usr/local/volumes/fileserver/:/app/fileserver/
