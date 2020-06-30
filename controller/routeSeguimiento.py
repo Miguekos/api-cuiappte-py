@@ -68,6 +68,14 @@ def get_seguimiento(id):
         # print(resp)
         return resp
 
+@app.route('/cuidappte/seguimientoOne/<id>', methods=['GET'])
+def get_seguimiento_one(id):
+    users = mongo.db.seguimiento.find({'id_': id})
+    resp = dumps(users)
+    # resp = list(users)
+    # print(resp)
+    return resp
+
 @app.route('/cuidappte/seguimiento', methods=['PUT'])
 def update_seguimiento():
     lima = pytz.timezone('America/Lima')
@@ -76,6 +84,7 @@ def update_seguimiento():
     _id = _json['_id']['$oid']
     _json['updated_at'] = li_time
     _json.pop('_id')
+    _json.pop('created_at')
     # _temp = _json['temp']
     # validate the received values
     # save edits
