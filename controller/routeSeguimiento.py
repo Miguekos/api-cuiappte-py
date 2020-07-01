@@ -29,28 +29,52 @@ def add_seguimiento():
     lima = pytz.timezone('America/Lima')
     li_time = datetime.now(lima)
     _json = request.json
-    _json.pop("codRes")
-    _json['created_at'] = li_time
-    _json['id_'] = _json['id']['$oid']
-    _json.pop("id")
-    # print(_json)
+    try:
+        _json.pop("codRes")
+        _json['created_at'] = li_time
+        _json['id_'] = _json['id']['$oid']
+        _json.pop("id")
+        # print(_json)
 
-    if _json:
-        # do not save password as a plain text
-        # save details
-        try:
-            id = mongo.db.seguimiento.insert(_json)
-            resp = jsonify('User added successfully!')
-            resp.status_code = 200
-            return resp
-        except:
-            jsonResp = {
-                "codRes": "99",
-                "message": "{}".format("Un error al registrar su seguimiento")
-            }
-            return jsonify(jsonResp)
-    else:
-        return not_found()
+        if _json:
+            # do not save password as a plain text
+            # save details
+            try:
+                id = mongo.db.seguimiento.insert(_json)
+                resp = jsonify('User added successfully!')
+                resp.status_code = 200
+                return resp
+            except:
+                jsonResp = {
+                    "codRes": "99",
+                    "message": "{}".format("Un error al registrar su seguimiento")
+                }
+                return jsonify(jsonResp)
+        else:
+            return not_found()
+    except:
+        _json['created_at'] = li_time
+        _json['id_'] = _json['_id']['$oid']
+        _json.pop("_id")
+        # print(_json)
+
+        if _json:
+            # do not save password as a plain text
+            # save details
+            try:
+                id = mongo.db.seguimiento.insert(_json)
+                resp = jsonify('User added successfully!')
+                resp.status_code = 200
+                return resp
+            except:
+                jsonResp = {
+                    "codRes": "99",
+                    "message": "{}".format("Un error al registrar su seguimiento")
+                }
+                return jsonify(jsonResp)
+        else:
+            return not_found()
+
 
 
 @app.route('/cuidappte/seguimiento/<id>', methods=['GET'])
