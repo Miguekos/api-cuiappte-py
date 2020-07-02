@@ -83,22 +83,9 @@ def get_seguimiento(id):
         # print(resp)
         return resp
 
-    if id == "seguimiento":
-        users = mongo.db.seguimiento.find({"seguimiento" : 1})
-        resp = dumps(users)
-        # resp = list(users)
-        # print(resp)
-        return resp
-
-    if id == "dealta":
-        users = mongo.db.seguimiento.find({"dealta" : 1})
-        resp = dumps(users)
-        # resp = list(users)
-        # print(resp)
-        return resp
-
     if id:
         users = mongo.db.seguimiento.find_one({'_id': ObjectId(id)})
+        print(id)
         resp = dumps(users)
         # resp = list(users)
         # print(resp)
