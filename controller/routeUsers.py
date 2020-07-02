@@ -35,6 +35,9 @@ def add_user():
     _url = 'https://api.apps.com.pe/uploads/'
     _role = _json['role']
     _temp = _json['temp']
+    _certificado = ""
+    _seguimiento = 0
+    _dealta = 0
     _profile = 'boy-avatar.png'
     global _password
     # _password = _json['pwd']
@@ -53,8 +56,11 @@ def add_user():
             funciones.enviarCorreo(_email, _name, _password)
             id = mongo.db.user.insert(
                 {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile, 'url': _url,
-                 'role': _role, 'area': _area, 'temp': _temp,
-                 'pwd': _hashed_password, "created_at": li_time})
+                 'role': _role, 'seguimiento': _seguimiento, 'dealta': _dealta,
+                 'certificado': _certificado, 'area': _area, 'temp': _temp,
+                 'pwd': _hashed_password, "created_at": li_time
+
+                 })
             resp = jsonify('User added successfully!')
             resp.status_code = 200
             return resp
@@ -177,6 +183,19 @@ def update_user_updateImage():
     # save edits
     mongo.db.user.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
                              {'$set': {'profile': _profile}})
+    resp = jsonify('User updated successfully!')
+    resp.status_code = 200
+    return resp
+
+@app.route('/cuidappte/user/certificado', methods=['PUT'])
+def update_user_certificado():
+    _json = request.json
+    _id = _json['_id']
+    _certificado = _json['certificado']
+    # validate the received values
+    # save edits
+    mongo.db.user.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+                             {'$set': {'certificado': _certificado}})
     resp = jsonify('User updated successfully!')
     resp.status_code = 200
     return resp

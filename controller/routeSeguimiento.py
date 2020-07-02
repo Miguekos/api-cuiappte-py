@@ -22,7 +22,6 @@ CORS(app, supports_credentials=True)
 def random_char(y):
     return ''.join(random.choice(string.ascii_letters) for x in range(y))
 
-
 # Rutas User
 @app.route('/cuidappte/seguimiento', methods=['POST'])
 def add_seguimiento():
@@ -75,8 +74,6 @@ def add_seguimiento():
         else:
             return not_found()
 
-
-
 @app.route('/cuidappte/seguimiento/<id>', methods=['GET'])
 def get_seguimiento(id):
     if id == "all":
@@ -85,12 +82,43 @@ def get_seguimiento(id):
         # resp = list(users)
         # print(resp)
         return resp
+
+    if id == "seguimiento":
+        users = mongo.db.seguimiento.find({"seguimiento" : 1})
+        resp = dumps(users)
+        # resp = list(users)
+        # print(resp)
+        return resp
+
+    if id == "dealta":
+        users = mongo.db.seguimiento.find({"dealta" : 1})
+        resp = dumps(users)
+        # resp = list(users)
+        # print(resp)
+        return resp
+
     if id:
         users = mongo.db.seguimiento.find_one({'_id': ObjectId(id)})
         resp = dumps(users)
         # resp = list(users)
         # print(resp)
         return resp
+
+@app.route('/cuidappte/seguimiento/seguimiento', methods=['GET'])
+def get_seguimiento_ciudate():
+    users = mongo.db.seguimiento.find({"seguimiento" : 1})
+    resp = dumps(users)
+    # resp = list(users)
+    print(resp)
+    return resp
+
+@app.route('/cuidappte/seguimiento/dealta', methods=['GET'])
+def get_seguimiento_dealta():
+    users = mongo.db.seguimiento.find({"dealta" : 1})
+    resp = dumps(users)
+    # resp = list(users)
+    # print(resp)
+    return resp
 
 @app.route('/cuidappte/seguimientoOne/<id>', methods=['GET'])
 def get_seguimiento_one(id):
@@ -108,7 +136,10 @@ def update_seguimiento():
     _id = _json['_id']['$oid']
     _json['updated_at'] = li_time
     _json.pop('_id')
-    _json.pop('created_at')
+    try:
+        _json.pop('created_at')
+    except:
+        print("No tiene created_at")
     # _temp = _json['temp']
     # validate the received values
     # save edits
