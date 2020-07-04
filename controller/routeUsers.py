@@ -1,18 +1,20 @@
-from app import app
-from flask import jsonify, Blueprint, flash, request, url_for
-from werkzeug.security import generate_password_hash, check_password_hash
-from mongo import mongo
-import json
-from bson.json_util import dumps
-from bson.objectid import ObjectId
-from flask_cors import CORS
-import pytz
-from datetime import datetime
 import random
 import string
+from datetime import datetime
+
+import pytz
+from bson.json_util import dumps
+from bson.objectid import ObjectId
+from flask import jsonify, request
+from flask_cors import CORS
+from werkzeug.security import generate_password_hash, check_password_hash
+
 import funciones
+from app import app
+from mongo import mongo
 
 CORS(app, supports_credentials=True)
+
 
 # @app.route("/")
 # def index():
@@ -20,6 +22,7 @@ CORS(app, supports_credentials=True)
 
 def random_char(y):
     return ''.join(random.choice(string.ascii_letters) for x in range(y))
+
 
 # Rutas User
 @app.route('/cuidappte/user/add', methods=['POST'])
@@ -35,6 +38,7 @@ def add_user():
     _url = 'https://api.apps.com.pe/uploads/'
     _role = _json['role']
     _temp = _json['temp']
+    _medico = 0
     _certificado = ""
     _seguimiento = 0
     _dealta = 0
@@ -57,7 +61,7 @@ def add_user():
             id = mongo.db.user.insert(
                 {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile, 'url': _url,
                  'role': _role, 'seguimiento': _seguimiento, 'dealta': _dealta,
-                 'certificado': _certificado, 'area': _area, 'temp': _temp,
+                 'certificado': _certificado, 'area': _area, 'temp': _temp, 'medico': _medico,
                  'pwd': _hashed_password, "created_at": li_time
 
                  })
@@ -65,7 +69,7 @@ def add_user():
             resp.status_code = 200
             return resp
         except:
-            user = mongo.db.user.find_one({"dni" : _json['dni']})
+            user = mongo.db.user.find_one({"dni": _json['dni']})
             # userd = list(user)
             userd = dict(user)
             # print(dumps(userd))
@@ -79,8 +83,8 @@ def add_user():
                 return dumps(jsonResp)
             else:
                 jsonResp = {
-                    "codRes" : "99",
-                    "message" : "{}".format(userd)
+                    "codRes": "99",
+                    "message": "{}".format(userd)
                 }
                 return jsonify(jsonResp)
     else:
@@ -187,6 +191,7 @@ def update_user_updateImage():
     resp.status_code = 200
     return resp
 
+
 @app.route('/cuidappte/user/certificado', methods=['PUT'])
 def update_user_certificado():
     _json = request.json
@@ -261,10 +266,11 @@ def recuperar_user():
             return jsonify("No se pudo generar el nuevo pass")
     except:
         jsonResp = {
-            "codRes" : "01",
-            "message" : "{}".format("Correo no existe")
+            "codRes": "01",
+            "message": "{}".format("Correo no existe")
         }
         return jsonify(jsonResp)
+
 
 @app.route('/cuidappte/user/delete/<id>', methods=['DELETE'])
 def delete_user(id):
