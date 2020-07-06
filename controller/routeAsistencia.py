@@ -1,19 +1,22 @@
-from app import app
-from flask import jsonify, flash, request
-from werkzeug.security import generate_password_hash, check_password_hash
-from mongo import mongo
+import collections
+from datetime import datetime
+
 from bson.json_util import dumps
 # JSON.parse (dumps)
 from bson.objectid import ObjectId
+from flask import jsonify, request
 from flask_cors import CORS
-from pytz import timezone
-from datetime import datetime, timedelta
-import collections
+
+from app import app
+from mongo import mongo
+
 CORS(app, supports_credentials=True)
+
 
 def repararIdInput(id):
     print(id['$oid'])
     return id['$oid']
+
 
 @app.route('/cuidappte/asistencia', methods=['GET'])
 def get_asistecia():
@@ -30,10 +33,12 @@ def get_asistecia():
         }
         return jsonify(jsonResp)
 
+
 def updateAt():
     import pytz
     lima = pytz.timezone('America/Lima')
     return datetime.now(lima)
+
 
 @app.route('/cuidappte/asistencia', methods=['POST'])
 def add_asistencia():
@@ -42,15 +47,50 @@ def add_asistencia():
     li_time = datetime.now(lima)
     _json = request.json
     _json['idUser'] = repararIdInput(_json['_id'])
-    _json['created_at'] = li_time
-    _json['updated_at'] = li_time
     _json.pop('_id')
+
+    idAsist = mongo.db.asistencia.find({"idUser": _json['idUser']})
     try:
-        id = mongo.db.asistencia.insert(_json)
-        resp = jsonify('User added successfully!')
-        resp.status_code = 200
-        return resp
-    except:
+        cantAsist = len(list(idAsist))
+        print(type(cantAsist))
+        print(cantAsist)
+        if cantAsist == 0:
+            _json['created_at'] = li_time
+            _json['updated_at'] = li_time
+            _json['asistenciaEntrada'] = _json['asistencia']
+            _json.pop("asistencia")
+            print("add")
+            id = mongo.db.asistencia.insert(_json)
+            resp = jsonify('asistencia added successfully!')
+            resp.status_code = 200
+            return resp
+
+        if cantAsist == 1:
+            # fehcaEvaluarTest = _json['asistencia']['created_at']
+            # fehcaEvaluarTest = datetime.strptime(fehcaEvaluarTest, '')
+            # print(fehcaEvaluarTest)
+            # print("#############################", type(fehcaEvaluarTest))
+            # tz = pytz.timezone('America/St_Johns')
+            # fehcaEvaluarTest = fehcaEvaluarTest.replace(tzinfo=pytz.UTC)
+            # fehcaEvaluar = fehcaEvaluarTest.astimezone(lima)
+            # print(fehcaEvaluar)
+            _json['updated_at'] = li_time
+            _json['asistenciaSalida'] = _json['asistencia']
+            _json.pop("asistencia")
+            _json.pop("created_at")
+            print("update")
+            mongo.db.asistencia.update_one({'idUser': _json['idUser']},
+                                           {'$set': _json})
+            resp = jsonify('Update asistencia successfully!')
+            resp.status_code = 200
+            return resp
+        #     id = mongo.db.asistencia.insert(_json)
+        #     resp = jsonify('User added successfully!')
+        #     resp.status_code = 200
+        #     return resp
+    except ValueError:
+    # except:
+        print(ValueError)
         jsonResp = {
             "codRes": "99",
             "message": "{}".format("Error guarando su asistencia")
@@ -63,11 +103,12 @@ def add_asistencia():
     # Converting string to list
     # print(asd)
 
+
 @app.route('/cuidappte/asistencia', methods=['PUT'])
 def put_asistencia():
     print("Consultando Creditos del ID: {}".format(id))
     user = mongo.db.asistencia.find()
-       # print(user)
+    # print(user)
     resp = dumps(user)
     # Converting string to list
     res = resp.strip('][').split(', ')
@@ -87,4 +128,3 @@ def deleteAsistencia(id):
     resp = jsonify('abono eliminado correctamente!')
     resp.status_code = 200
     return resp
-

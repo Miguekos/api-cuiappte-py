@@ -116,6 +116,7 @@ def CalcuarTodo(arg):
         # print(now.strftime("%Y-%m-%d"))
         # fehcaEvaluar = post['created_at'] - timedelta(hours=5)
         fehcaEvaluarTest = post['created_at']
+        print("#############################",type(fehcaEvaluarTest))
         # tz = pytz.timezone('America/St_Johns')
         fehcaEvaluarTest = fehcaEvaluarTest.replace(tzinfo=pytz.UTC)
         fehcaEvaluar = fehcaEvaluarTest.astimezone(lima)
