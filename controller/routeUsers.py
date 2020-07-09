@@ -38,6 +38,13 @@ def add_user():
     _url = 'https://api.apps.com.pe/uploads/'
     _role = _json['role']
     _temp = _json['temp']
+
+    _edad = _json['edad']
+    _sexo = _json['sexo']
+    _departamento = _json['departamento']
+    _cargo = _json['cargo']
+    _sueldo = _json['sueldo']
+
     _medico = 0
     _certificado = ""
     _seguimiento = 0
@@ -59,11 +66,25 @@ def add_user():
         try:
             funciones.enviarCorreo(_email, _name, _password)
             id = mongo.db.user.insert(
-                {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile, 'url': _url,
-                 'role': _role, 'seguimiento': _seguimiento, 'dealta': _dealta,
-                 'certificado': _certificado, 'area': _area, 'temp': _temp, 'medico': _medico,
+                {'name': _name,
+                 'dni': _dni,
+                 'email': _email,
+                 'telefono': _telefono,
+                 'profile': _profile,
+                 'url': _url,
+                 'role': _role,
+                 'seguimiento': _seguimiento,
+                 'dealta': _dealta,
+                 'certificado': _certificado,
+                 'area': _area,
+                 'temp': _temp,
+                 'medico': _medico,
+                 'edad': _edad,
+                 'sexo': _sexo,
+                 'departamento': _departamento,
+                 'cargo': _cargo,
+                 'sueldo': _sueldo,
                  'pwd': _hashed_password, "created_at": li_time
-
                  })
             resp = jsonify('User added successfully!')
             resp.status_code = 200
