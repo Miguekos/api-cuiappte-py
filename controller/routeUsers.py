@@ -236,16 +236,46 @@ def update_user():
     _telefono = _json['telefono']
     _dni = _json['dni']
     _profile = _json['profile']
+    _edad = _json['edad']
+    _role = _json['role']
+    _sexo = _json['sexo']
+    _departamento = _json['departamento']
+    _cargo = _json['cargo']
+    _sueldo = _json['sueldo']
+    _medico = _json['medico']
     _password = _json['pwd']
     # validate the received values
     if _name and _email and _id and request.method == 'PUT':
         # do not save password as a plain text
         global jsonUpdate, _hashed_password
         if len(_password) == 0:
-            jsonUpdate = {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile}
+            jsonUpdate = {'name': _name,
+                          'dni': _dni,
+                          'email': _email,
+                          'telefono': _telefono,
+                          'role': _role,
+                          'profile': _profile,
+                          'medico': _medico,
+                          'edad': _edad,
+                          'sexo': _sexo,
+                          'departamento': _departamento,
+                          'cargo': _cargo,
+                          'sueldo': _sueldo,
+                          }
         else:
             _hashed_password = generate_password_hash(_password)
-            jsonUpdate = {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile,
+            jsonUpdate = {'name': _name,
+                          'dni': _dni,
+                          'email': _email,
+                          'telefono': _telefono,
+                          'role': _role,
+                          'profile': _profile,
+                          'medico': _medico,
+                          'edad': _edad,
+                          'sexo': _sexo,
+                          'departamento': _departamento,
+                          'cargo': _cargo,
+                          'sueldo': _sueldo,
                           'pwd': _hashed_password}
         # save edits
         mongo.db.user.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
@@ -291,6 +321,26 @@ def recuperar_user():
             "message": "{}".format("Correo no existe")
         }
         return jsonify(jsonResp)
+
+
+@app.route('/cuidappte/user/updateall', methods=['PUT'])
+def update_user_general():
+    _json = request.json
+
+    # do not save password as a plain text
+    global jsonUpdate, _hashed_password
+    if len(_password) == 0:
+        jsonUpdate = {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile}
+    else:
+        _hashed_password = generate_password_hash(_password)
+        jsonUpdate = {'name': _name, 'dni': _dni, 'email': _email, 'telefono': _telefono, 'profile': _profile,
+                      'pwd': _hashed_password}
+    # save edits
+    mongo.db.user.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},
+                             {'$set': jsonUpdate})
+    resp = jsonify('User updated successfully!')
+    resp.status_code = 200
+    return resp
 
 
 @app.route('/cuidappte/user/delete/<id>', methods=['DELETE'])
