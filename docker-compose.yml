@@ -1,9 +1,9 @@
 # docker-compose.yml
 version: "2"
 services:
-  api_cuidappte:
-    container_name: api_cuidappte
-    #    image: api_cuidappte:1.0
+  api_cuidappte_laprotectora:
+    container_name: api_cuidappte_laprotectora
+    #    image: api_cuidappte_laprotectora:1.0
     # build: .
     build:
       context: .
@@ -12,4 +12,4 @@ services:
     volumes:
       - /usr/local/volumes/fileserver/:/app/fileserver/
     ports:
-      - "9876:9876"
+      - "9889:9889"
