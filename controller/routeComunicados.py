@@ -4,6 +4,7 @@ from bson.json_util import dumps
 # JSON.parse (dumps)
 from flask import jsonify, request
 from flask_cors import CORS
+from bson.objectid import ObjectId
 
 from app import app
 from mongo import mongo
@@ -64,3 +65,11 @@ def add_comunicados():
         #     "message": "{}".format("Error guarando su comunicados")
         # }
         # return jsonify(jsonResp)
+
+@app.route('/cuidappte/comunicados/<id>', methods=['DELETE'])
+def delete_comunicados(id):
+    print("ID que se elminara: {}".format(id))
+    mongo.db.comunicados.delete({'_id': ObjectId(id)})
+    resp = jsonify('registro eliminado correctamente!')
+    resp.status_code = 200
+    return resp

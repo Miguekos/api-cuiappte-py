@@ -125,10 +125,10 @@ def put_documentos():
     return "dumps(val)"
 
 
-@app.route('/cuidappte/documentos', methods=['DELETE'])
+@app.route('/cuidappte/documentos/<id>', methods=['DELETE'])
 def delete_documentos(id):
-    print("Consultando Creditos del ID: {}".format(id))
+    print("ID: {}".format(id))
     mongo.db.documentos.delete_one({'_id': ObjectId(id)})
-    resp = jsonify('abono eliminado correctamente!')
+    resp = jsonify('registro eliminado correctamente!')
     resp.status_code = 200
     return resp
