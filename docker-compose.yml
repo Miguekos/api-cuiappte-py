@@ -12,4 +12,4 @@ services:
     volumes:
       - /usr/local/volumes/fileserver/:/app/fileserver/
     ports:
-      - "9887:9887"
+      - "9888:9888"
