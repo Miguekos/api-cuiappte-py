@@ -17,4 +17,5 @@ import controller.routeAbonos
 import controller.routeSeguimiento
 import controller.routeAsistencia
 import controller.routeDoc
+import controller.routeComunicados
 import serverfile
