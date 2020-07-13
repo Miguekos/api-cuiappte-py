@@ -1,10 +1,10 @@
 from datetime import datetime
 
 from bson.json_util import dumps
+from bson.objectid import ObjectId
 # JSON.parse (dumps)
 from flask import jsonify, request
 from flask_cors import CORS
-from bson.objectid import ObjectId
 
 from app import app
 from mongo import mongo
@@ -49,7 +49,6 @@ def add_comunicados():
     _json.pop('id')
     _json.pop('codRes')
     _json.pop('temp')
-
     try:
         _json['created_at'] = li_time
         _json['updated_at'] = li_time
@@ -57,19 +56,19 @@ def add_comunicados():
         resp = jsonify('Update comunicados successfully!')
         resp.status_code = 200
         return resp
-    except ValueError:
-        print(ValueError)
+    except:
         # except:
-        # jsonResp = {
-        #     "codRes": "99",
-        #     "message": "{}".format("Error guarando su comunicados")
-        # }
-        # return jsonify(jsonResp)
+        jsonResp = {
+            "codRes": "99",
+            "message": "{}".format("Error guarando su documentos")
+        }
+        return jsonify(jsonResp)
+
 
 @app.route('/cuidappte/comunicados/<id>', methods=['DELETE'])
 def delete_comunicados(id):
     print("ID que se elminara: {}".format(id))
-    mongo.db.comunicados.delete({'_id': ObjectId(id)})
+    mongo.db.comunicados.delete_one({'_id': ObjectId(id)})
     resp = jsonify('registro eliminado correctamente!')
     resp.status_code = 200
     return resp

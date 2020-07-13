@@ -327,6 +327,20 @@ def clientsS():
     return dumps(respuesta)
 
 
+@app.route('/cuidappte/cliente/validar/<id>', methods=['GET'])
+def client_validar(id):
+    import pytz
+    lima = pytz.timezone('America/Lima')
+    li_time = datetime.now()
+    ini_date = li_time.strftime("%d/%m/%Y")
+    fin_date = li_time.strftime("%d/%m/%Y")
+    in_time_obj = datetime.strptime("{} 00:00:00".format(ini_date), '%d/%m/%Y %H:%M:%S')
+    out_time_obj = datetime.strptime("{} 23:59:59".format(fin_date), '%d/%m/%Y %H:%M:%S')
+    user = mongo.db.clientes.find({'dni': id, "created_at": {"$gte": in_time_obj, "$lt": out_time_obj}})
+    resp = dumps(user)
+    print(resp)
+    return resp
+
 @app.route('/cuidappte/cliente/<id>')
 def client(id):
     user = mongo.db.clientes.find({'dni': id})

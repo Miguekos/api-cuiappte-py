@@ -33,6 +33,27 @@ def get_asistecia():
         }
         return jsonify(jsonResp)
 
+@app.route('/cuidappte/asistencia/<id>', methods=['GET'])
+def get_asistecia_one(id):
+    try:
+        import pytz
+        lima = pytz.timezone('America/Lima')
+        li_time = datetime.now()
+        ini_date = li_time.strftime("%d/%m/%Y")
+        fin_date = li_time.strftime("%d/%m/%Y")
+        in_time_obj = datetime.strptime("{} 00:00:00".format(ini_date), '%d/%m/%Y %H:%M:%S')
+        out_time_obj = datetime.strptime("{} 23:59:59".format(fin_date), '%d/%m/%Y %H:%M:%S')
+        # idAsist = mongo.db.asistencia.find({"idUser": id})
+        idAsist = mongo.db.asistencia.find_one({"idUser": id, "created_at": {"$gte": in_time_obj, "$lt": out_time_obj}})
+        # asist["id"] = repararIdInput(asist["_id"])
+        # asist.pop("_id")
+        return dumps(idAsist)
+    except:
+        jsonResp = {
+            "codRes": "99",
+            "message": "{}".format("Error get documentos")
+        }
+        return jsonify(jsonResp)
 
 def updateAt():
     import pytz
@@ -44,12 +65,18 @@ def updateAt():
 def add_asistencia():
     import pytz
     lima = pytz.timezone('America/Lima')
-    li_time = datetime.now(lima)
+    li_time = datetime.now()
     _json = request.json
     _json['idUser'] = repararIdInput(_json['_id'])
     _json.pop('_id')
 
-    idAsist = mongo.db.asistencia.find({"idUser": _json['idUser']})
+    ini_date = li_time.strftime("%d/%m/%Y")
+    fin_date = li_time.strftime("%d/%m/%Y")
+    in_time_obj = datetime.strptime("{} 00:00:00".format(ini_date), '%d/%m/%Y %H:%M:%S')
+    out_time_obj = datetime.strptime("{} 23:59:59".format(fin_date), '%d/%m/%Y %H:%M:%S')
+
+
+    idAsist = mongo.db.asistencia.find({"idUser": _json['idUser'],"created_at": {"$gte": in_time_obj, "$lt": out_time_obj}})
     try:
         cantAsist = len(list(idAsist))
         print(type(cantAsist))
@@ -88,9 +115,9 @@ def add_asistencia():
         #     resp = jsonify('User added successfully!')
         #     resp.status_code = 200
         #     return resp
-    except ValueError:
-    # except:
-        print(ValueError)
+    except:
+        # except:
+        #     print(ValueError)
         jsonResp = {
             "codRes": "99",
             "message": "{}".format("Error guarando su asistencia")
