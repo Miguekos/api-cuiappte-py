@@ -1,8 +1,8 @@
 # docker-compose.yml
 version: "2"
 services:
-  api_cuidappte:
-    container_name: api_cuidappte
+  api_cuidappte_medifarma:
+    container_name: api_cuidappte_medifarma
     #    image: api_cuidappte:1.0
     # build: .
     build:
@@ -12,4 +12,4 @@ services:
     volumes:
       - /usr/local/volumes/fileserver/:/app/fileserver/
     ports:
-      - "9876:9876"
+      - "9892:9892"
