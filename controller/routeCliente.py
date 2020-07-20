@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 import pytz
-from bson.json_util import dumps
+from bson.json_util import dumps, loads
 from bson.objectid import ObjectId
 from flask import jsonify, request
 from flask_cors import CORS
@@ -321,6 +321,33 @@ def clientsReporte():
     })
     return resp
 
+
+@app.route('/cuidappte/notification')
+def notificaciones():
+    import pytz
+    lima = pytz.timezone('America/Lima')
+    li_time = datetime.now() - timedelta(days=2)
+    li_time_fin = datetime.now() - timedelta(days=0)
+    print(li_time)
+    print(li_time_fin)
+    ini_date = li_time.strftime("%d/%m/%Y")
+    fin_date = li_time_fin.strftime("%d/%m/%Y")
+    in_time_obj = datetime.strptime("{} 00:00:00".format(ini_date), '%d/%m/%Y %H:%M:%S')
+    out_time_obj = datetime.strptime("{} 23:59:59".format(fin_date), '%d/%m/%Y %H:%M:%S')
+    conSintomas = mongo.db.clientes.find({'estados': "01", "created_at": {"$gte": in_time_obj, "$lt": out_time_obj}})
+    EnCuidate = mongo.db.seguimiento.find({"created_at": {"$gte": in_time_obj, "$lt": out_time_obj}})
+    # print(list(conSintomas))
+    # jsonResponse = {
+    #     "ConSintomas": jsonify(conSintomas),
+    #     "EnCuidate": "{}".format(EnCuidate)
+    # }
+    message = {
+        'status': conSintomas,
+        'message': 'Not Found'
+    }
+    resp = jsonify(message)
+    resp.status_code = 200
+    return resp
 
 @app.route('/cuidappte/clientes/reporte/order')
 def clientsReporteOrder():
