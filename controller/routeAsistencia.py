@@ -33,6 +33,23 @@ def get_asistecia():
         }
         return jsonify(jsonResp)
 
+@app.route('/cuidappte/asistenciaUser', methods=['POST'])
+def get_asisteciaUser():
+    try:
+        _json = request.json
+        asist = mongo.db.asistencia.find({'jefeDirecto' : _json['dni']})
+        # asist["id"] = repararIdInput(asist["_id"])
+        # asist.pop("_id")
+        return dumps(asist)
+    except ValueError:
+        print(ValueError)
+        jsonResp = {
+            "codRes": "99",
+            "message": "{}".format("Error get asistencia jefe")
+        }
+        return jsonify(jsonResp)
+
+
 @app.route('/cuidappte/asistencia/<id>', methods=['GET'])
 def get_asistecia_one(id):
     try:
