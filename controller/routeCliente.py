@@ -336,16 +336,14 @@ def notificaciones():
     out_time_obj = datetime.strptime("{} 23:59:59".format(fin_date), '%d/%m/%Y %H:%M:%S')
     conSintomas = mongo.db.clientes.find({'estados': "01", "created_at": {"$gte": in_time_obj, "$lt": out_time_obj}})
     EnCuidate = mongo.db.seguimiento.find({"created_at": {"$gte": in_time_obj, "$lt": out_time_obj}})
+    mongo.db.notificaciones_consintomas.insert_many(list(conSintomas))
+    mongo.db.notificaciones_cuidate.insert_many(list(EnCuidate))
     # print(list(conSintomas))
     # jsonResponse = {
     #     "ConSintomas": jsonify(conSintomas),
     #     "EnCuidate": "{}".format(EnCuidate)
     # }
-    message = {
-        'status': conSintomas,
-        'message': 'Not Found'
-    }
-    resp = jsonify(message)
+    resp = jsonify("Notificaciones generadas")
     resp.status_code = 200
     return resp
 
