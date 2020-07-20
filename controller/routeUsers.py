@@ -38,7 +38,7 @@ def add_user():
     _url = 'https://api.apps.com.pe/uploads/'
     _role = _json['role']
     _temp = _json['temp']
-
+    _jefeDirecto = _json['jefeDirecto']
     _edad = _json['edad']
     _sexo = _json['sexo']
     _departamento = _json['departamento']
@@ -84,6 +84,7 @@ def add_user():
                  'departamento': _departamento,
                  'cargo': _cargo,
                  'sueldo': _sueldo,
+                 "jefeDirecto": _jefeDirecto,
                  'pwd': _hashed_password, "created_at": li_time
                  })
             resp = jsonify('User added successfully!')
@@ -241,6 +242,8 @@ def update_user():
     _sexo = _json['sexo']
     _departamento = _json['departamento']
     _cargo = _json['cargo']
+    _area = _json['area']
+    _jefeDirecto = _json['jefeDirecto']
     _sueldo = _json['sueldo']
     _medico = _json['medico']
     _password = _json['pwd']
@@ -260,7 +263,9 @@ def update_user():
                           'sexo': _sexo,
                           'departamento': _departamento,
                           'cargo': _cargo,
+                          'area': _area,
                           'sueldo': _sueldo,
+                          'jefeDirecto' : _jefeDirecto
                           }
         else:
             _hashed_password = generate_password_hash(_password)
@@ -276,6 +281,7 @@ def update_user():
                           'departamento': _departamento,
                           'cargo': _cargo,
                           'sueldo': _sueldo,
+                          'jefeDirecto': _jefeDirecto,
                           'pwd': _hashed_password}
         # save edits
         mongo.db.user.update_one({'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)},

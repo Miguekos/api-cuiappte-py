@@ -74,6 +74,15 @@ def add_seguimiento():
         else:
             return not_found()
 
+@app.route('/cuidappte/seguimientoJefe', methods=['POST'])
+def get_seguimientoJefe():
+    _json = request.json
+    users = mongo.db.seguimiento.find({'jefeDirecto' : _json['dni']})
+    resp = dumps(users)
+    # resp = list(users)
+    # print(resp)
+    return resp
+
 @app.route('/cuidappte/seguimiento/<id>', methods=['GET'])
 def get_seguimiento(id):
     if id == "all":
