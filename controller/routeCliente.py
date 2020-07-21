@@ -23,6 +23,8 @@ def add_client():
     li_time = datetime.now(lima)
     _json = request.json
     print(_json)
+    _json.pop('_id')
+    _json.pop('pwd')
     # _name = _json['name']
     # _email = _json['email']
     # _password = _json['pwd']
@@ -49,23 +51,24 @@ def add_client():
         resp = jsonify('{}'.format(id))
         resp.status_code = 200
         return resp
-    except:
-        user = mongo.db.clientes.find_one({'dni': _json['dni']})
-        resp = dumps(user)
-        if resp == "null":
-            print("ValueError")
-            jsonResp = {
-                "codRes": "99",
-                "message": "{}".format(id)
-            }
-            return jsonify(jsonResp)
-        else:
-            print("ValueError")
-            jsonResp = {
-                "codRes": "02",
-                "message": "{}".format(id)
-            }
-            return jsonify(jsonResp)
+    except ValueError:
+        print(ValueError)
+        # user = mongo.db.clientes.find_one({'dni': _json['dni']})
+        # resp = dumps(user)
+        # if resp == "null":
+        #     print("ValueError")
+        #     jsonResp = {
+        #         "codRes": "99",
+        #         "message": "{}".format(id)
+        #     }
+        #     return jsonify(jsonResp)
+        # else:
+        #     print("ValueError")
+        #     jsonResp = {
+        #         "codRes": "02",
+        #         "message": "{}".format(id)
+        #     }
+        #     return jsonify(jsonResp)
 
 
 def FechaTodo():

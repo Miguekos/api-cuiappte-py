@@ -33,6 +33,7 @@ def add_seguimiento():
         _json['created_at'] = li_time
         _json['id_'] = _json['id']['$oid']
         _json.pop("id")
+        _json.pop("pwd")
         # print(_json)
 
         if _json:
@@ -55,6 +56,7 @@ def add_seguimiento():
         _json['created_at'] = li_time
         _json['id_'] = _json['_id']['$oid']
         _json.pop("_id")
+        _json.pop("pwd")
         # print(_json)
 
         if _json:

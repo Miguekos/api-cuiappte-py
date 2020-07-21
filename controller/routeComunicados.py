@@ -30,14 +30,27 @@ def get_comunicados(id):
         # asist["id"] = repararIdInput(asist["_id"])
         # asist.pop("_id")
         return dumps(idAsist)
-    except ValueError:
-        print(ValueError)
-        # jsonResp = {
-        #     "codRes": "99",
-        #     "message": "{}".format("Error get comunicados")
-        # }
-        # return jsonify(jsonResp)
+    except:
+        jsonResp = {
+            "codRes": "99",
+            "message": "{}".format("Error get comunicados")
+        }
+        return jsonify(jsonResp)
 
+
+@app.route('/cuidappte/comunicados', methods=['GET'])
+def get_comunicados_all():
+    try:
+        idAsist = mongo.db.comunicados.find()
+        # asist["id"] = repararIdInput(asist["_id"])
+        # asist.pop("_id")
+        return dumps(idAsist)
+    except:
+        jsonResp = {
+            "codRes": "99",
+            "message": "{}".format("Error get comunicados")
+        }
+        return jsonify(jsonResp)
 
 @app.route('/cuidappte/comunicados', methods=['POST'])
 def add_comunicados():

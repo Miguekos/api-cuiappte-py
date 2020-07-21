@@ -1,4 +1,3 @@
-import collections
 from datetime import datetime
 
 from bson.json_util import dumps
@@ -40,10 +39,50 @@ def get_notifications_consintomas(tipo):
         return jsonify(jsonResp)
 
 
+@app.route('/cuidappte/notifications/alertas/<id>', methods=['GET'])
+def get_notifications_alertas(id):
+    try:
+        idAsist = mongo.db.notificaciones.find({"dni": id})
+        return dumps(idAsist)
+        # asist["id"] = repararIdInput(asist["_id"])
+        # asist.pop("_id")
+    except:
+        jsonResp = {
+            "codRes": "99",
+            "message": "{}".format("Error get documentos")
+        }
+        return jsonify(jsonResp)
+
+
+@app.route('/cuidappte/notifications/alertas', methods=['POST'])
+def add_notifications_alertas():
+    try:
+        _json = request.json
+        FindidAsist = mongo.db.user.find({'dni': _json['dni']})
+        FindidAsist = list(FindidAsist)[0]
+        print(FindidAsist)
+        FindidAsist.pop('_id')
+        FindidAsist['comentario'] = _json['comentario']
+        idAsist = mongo.db.notificaciones.insert(FindidAsist)
+        resp = jsonify('{}'.format("se registro la alerta"))
+        resp.status_code = 200
+        return resp
+        # asist["id"] = repararIdInput(asist["_id"])
+        # asist.pop("_id")
+    except ValueError:
+        print(ValueError)
+        jsonResp = {
+            "codRes": "99",
+            "message": "{}".format("Error get documentos")
+        }
+        return jsonify(jsonResp)
+
+
 def updateAt():
     import pytz
     lima = pytz.timezone('America/Lima')
     return datetime.now(lima)
+
 
 @app.route('/cuidappte/notifications/<tipo>/<id>', methods=['DELETE'])
 def delete_notificaciones(tipo, id):
