@@ -42,8 +42,14 @@ def get_notifications_consintomas(tipo):
 @app.route('/cuidappte/notifications/alertas/<id>', methods=['GET'])
 def get_notifications_alertas(id):
     try:
-        idAsist = mongo.db.notificaciones.find({"dni": id})
+        idAsist = mongo.db.notificaciones.find({"dni": id, 'activo': 1})
+        # CidAsist = mongo.db.notificaciones.count({"dni": id})
+        # jsonResponse = {
+        #     'message': dict(idAsist),
+        #     'cantAsist': CidAsist
+        # }
         return dumps(idAsist)
+        # return jsonResponse
         # asist["id"] = repararIdInput(asist["_id"])
         # asist.pop("_id")
     except:
@@ -57,20 +63,34 @@ def get_notifications_alertas(id):
 @app.route('/cuidappte/notifications/alertas', methods=['POST'])
 def add_notifications_alertas():
     try:
+        import pytz
+        lima = pytz.timezone('America/Lima')
         _json = request.json
-        FindidAsist = mongo.db.user.find({'dni': _json['dni']})
-        FindidAsist = list(FindidAsist)[0]
-        print(FindidAsist)
-        FindidAsist.pop('_id')
-        FindidAsist['comentario'] = _json['comentario']
-        idAsist = mongo.db.notificaciones.insert(FindidAsist)
+        FindNotiDe = mongo.db.user.find({'dni': _json['de']})
+        FindNotiPara = mongo.db.user.find({'dni': _json['para']})
+        FindNotiPara = list(FindNotiPara)[0]
+        FindNotiDe = list(FindNotiDe)[0]
+        FindNotiDe.pop('_id')
+        FindNotiDe.pop('pwd')
+        FindNotiPara.pop('_id')
+        FindNotiPara.pop('pwd')
+        print(FindNotiDe)
+        jsonInsert = {
+            'de': FindNotiDe,
+            'para': FindNotiPara,
+            'dni': FindNotiPara['dni'],
+            'comentario': _json['comentario'],
+            'color': _json['color'],
+            'activo': 1,
+            'created_at': datetime.now(lima)
+        }
+        idAsist = mongo.db.notificaciones.insert(jsonInsert)
         resp = jsonify('{}'.format("se registro la alerta"))
         resp.status_code = 200
         return resp
         # asist["id"] = repararIdInput(asist["_id"])
         # asist.pop("_id")
-    except ValueError:
-        print(ValueError)
+    except:
         jsonResp = {
             "codRes": "99",
             "message": "{}".format("Error get documentos")
@@ -84,20 +104,15 @@ def updateAt():
     return datetime.now(lima)
 
 
-@app.route('/cuidappte/notifications/<tipo>/<id>', methods=['DELETE'])
-def delete_notificaciones(tipo, id):
+@app.route('/cuidappte/notifications/alertas/<id>', methods=['PUT'])
+def delete_notificaciones(id):
     print("ID: {}".format(id))
     try:
-        if tipo == 1:
-            mongo.db.notificaciones_consintomas.delete_one({'_id': ObjectId(id)})
-            resp = jsonify('registro eliminado correctamente!')
-            resp.status_code = 200
-            return resp
-        if tipo == 2:
-            mongo.db.notificaciones_cuidate.delete_one({'_id': ObjectId(id)})
-            resp = jsonify('registro eliminado correctamente!')
-            resp.status_code = 200
-            return resp
+        mongo.db.notificaciones.update_one({'_id': ObjectId(id['$oid']) if '$oid' in id else ObjectId(id)},
+                                     {'$set': {'activo': 0}})
+        resp = jsonify('registro actualizado correctamente!')
+        resp.status_code = 200
+        return resp
     except:
         jsonResp = {
             "codRes": "99",
