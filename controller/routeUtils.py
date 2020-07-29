@@ -201,12 +201,12 @@ def put_utils():
 
 @app.route('/cuidappte/utils/<tipo>/<id>', methods=['DELETE'])
 def delete_utils(tipo, id):
-    print(tipo)
-    print(id)
-    if tipo == 1:
-        mongo.db.cargos.delete({'registro': id})
-    if tipo == 2:
-        mongo.db.areas.delete_one({'registro': id})
+    print(type(tipo))
+    print(type(id))
+    if tipo == "1":
+        mongo.db.cargos.delete_one({"_id": ObjectId(id)})
+    if tipo == "2":
+        mongo.db.areas.delete_one({"_id": ObjectId(id)})
     resp = jsonify('registro eliminado correctamente!')
     resp.status_code = 200
     return resp
