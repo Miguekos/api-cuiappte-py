@@ -1,5 +1,5 @@
 import collections
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from bson.json_util import dumps
 # JSON.parse (dumps)
@@ -17,11 +17,36 @@ def repararIdInput(id):
     print(id['$oid'])
     return id['$oid']
 
+def formatDate(v):
+    import pytz
+    lima = pytz.timezone('America/Lima')
+    fehcaEvaluarTest = v
+    # print("fehcaEvaluarTest", fehcaEvaluarTest)
+    # tz = pytz.timezone('America/St_Johns')
+    fehcaEvaluarTest = fehcaEvaluarTest.replace(tzinfo=pytz.UTC)
+    # print("fehcaEvaluarTest 2", fehcaEvaluarTest)
+    fehcaEvaluar = fehcaEvaluarTest.astimezone(lima)
+    # print("fehcaEvaluarTest 3", fehcaEvaluar)
+    # print("fehcaEvaluar")
+    # print(fehcaEvaluar)
+    # print(datetime.now(lima))
+    # return v or datetime.now(lima)
+    return fehcaEvaluar
+
 
 @app.route('/cuidappte/asistencia', methods=['GET'])
 def get_asistecia():
     try:
-        asist = mongo.db.asistencia.find()
+        args = request.args
+        fi = args["fi"]
+        ff = args["ff"]
+        # print(type(fi))
+        in_time_obj = datetime.strptime("{} 00:00:00".format(fi), '%d/%m/%Y %H:%M:%S')
+        in_time_obj = formatDate(in_time_obj) + timedelta(hours=5)
+        out_time_obj = datetime.strptime("{} 23:59:59".format(ff), '%d/%m/%Y %H:%M:%S')
+        out_time_obj = formatDate(out_time_obj) + timedelta(hours=5)
+        print("Traer datos de {} hasta {}".format(in_time_obj, out_time_obj))
+        asist = mongo.db.asistencia.find({'created_at': {"$gte": in_time_obj, "$lt": out_time_obj}})
         # asist["id"] = repararIdInput(asist["_id"])
         # asist.pop("_id")
         return dumps(asist)
@@ -33,11 +58,12 @@ def get_asistecia():
         }
         return jsonify(jsonResp)
 
+
 @app.route('/cuidappte/asistenciaUser', methods=['POST'])
 def get_asisteciaUser():
     try:
         _json = request.json
-        asist = mongo.db.asistencia.find({'jefeDirecto' : _json['dni']})
+        asist = mongo.db.asistencia.find({'jefeDirecto': _json['dni']})
         # asist["id"] = repararIdInput(asist["_id"])
         # asist.pop("_id")
         return dumps(asist)
@@ -72,6 +98,7 @@ def get_asistecia_one(id):
         }
         return jsonify(jsonResp)
 
+
 def updateAt():
     import pytz
     lima = pytz.timezone('America/Lima')
@@ -92,8 +119,8 @@ def add_asistencia():
     in_time_obj = datetime.strptime("{} 00:00:00".format(ini_date), '%d/%m/%Y %H:%M:%S')
     out_time_obj = datetime.strptime("{} 23:59:59".format(fin_date), '%d/%m/%Y %H:%M:%S')
 
-
-    idAsist = mongo.db.asistencia.find({"idUser": _json['idUser'],"created_at": {"$gte": in_time_obj, "$lt": out_time_obj}})
+    idAsist = mongo.db.asistencia.find(
+        {"idUser": _json['idUser'], "created_at": {"$gte": in_time_obj, "$lt": out_time_obj}})
     try:
         cantAsist = len(list(idAsist))
         print(type(cantAsist))

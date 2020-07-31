@@ -11,6 +11,7 @@ from mongo import mongo
 
 CORS(app, supports_credentials=True)
 
+
 def formatDate(v):
     import pytz
     lima = pytz.timezone('America/Lima')
@@ -26,6 +27,7 @@ def formatDate(v):
     # print(datetime.now(lima))
     # return v or datetime.now(lima)
     return fehcaEvaluar
+
 
 def calcuarDeuda(monto, porcent):
     return monto * (porcent / 100) + monto
@@ -365,6 +367,7 @@ def notificaciones():
     resp.status_code = 200
     return resp
 
+
 @app.route('/cuidappte/clientes/reporte/order')
 def clientsReporteOrder():
     # user = mongo.db.clientes.find()
@@ -459,6 +462,7 @@ def clientsCS():
     # print(resp)
     # return resp
 
+
 @app.route('/cuidappte/clientesCSUser', methods=['POST'])
 def clientsCSUser():
     _json = request.json
@@ -468,31 +472,24 @@ def clientsCSUser():
     print(len(respuesta))
     return dumps(respuesta)
 
+
 @app.route('/cuidappte/clientesS')
 def clientsS():
     args = request.args
-    print(args)
+    es = args["es"]
     fi = args["fi"]
     ff = args["ff"]
-    print(type(fi))
-    # if "foo" in args:
-    #     foo = args["foo"]
-    #
-    # if "bar" in args:
-    #     bar = args.get("bar")
-    #
-    # if "baz" in args:
-    #     baz = args["baz"]
-
+    # print(type(fi))
     in_time_obj = datetime.strptime("{} 00:00:00".format(fi), '%d/%m/%Y %H:%M:%S')
     in_time_obj = formatDate(in_time_obj) + timedelta(hours=5)
     out_time_obj = datetime.strptime("{} 23:59:59".format(ff), '%d/%m/%Y %H:%M:%S')
     out_time_obj = formatDate(out_time_obj) + timedelta(hours=5)
     print("Traer datos de {} hasta {}".format(in_time_obj, out_time_obj))
-    users = mongo.db.clientes.find({"estados": "00", 'created_at': {"$gte": in_time_obj, "$lt": out_time_obj}})
+    users = mongo.db.clientes.find({"estados": es, 'created_at': {"$gte": in_time_obj, "$lt": out_time_obj}})
     respuesta = list(users)
     print(len(respuesta))
     return dumps(respuesta)
+
 
 @app.route('/cuidappte/clientesSUser', methods=['POST'])
 def clientsSUser():
@@ -519,10 +516,21 @@ def client_validar(id):
     return resp
 
 
-@app.route('/cuidappte/cliente/<id>')
-def client(id):
-    user = mongo.db.clientes.find({'dni': id})
-    resp = dumps(user)
+@app.route('/cuidappte/cliente')
+def client():
+    args = request.args
+    # print(args)
+    dni = args["dni"]
+    fi = args["fi"]
+    ff = args["ff"]
+    # print(type(fi))
+    in_time_obj = datetime.strptime("{} 00:00:00".format(fi), '%d/%m/%Y %H:%M:%S')
+    in_time_obj = formatDate(in_time_obj) + timedelta(hours=5)
+    out_time_obj = datetime.strptime("{} 23:59:59".format(ff), '%d/%m/%Y %H:%M:%S')
+    out_time_obj = formatDate(out_time_obj) + timedelta(hours=5)
+    print("Traer datos de {} hasta {}".format(in_time_obj, out_time_obj))
+    users = mongo.db.clientes.find({"dni": dni, 'created_at': {"$gte": in_time_obj, "$lt": out_time_obj}})
+    resp = dumps(users)
     return resp
 
 

@@ -1,6 +1,6 @@
 import random
 import string
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from bson.json_util import dumps
 from bson.objectid import ObjectId
@@ -14,6 +14,21 @@ from mongo import mongo
 
 CORS(app, supports_credentials=True)
 
+def formatDate(v):
+    import pytz
+    lima = pytz.timezone('America/Lima')
+    fehcaEvaluarTest = v
+    # print("fehcaEvaluarTest", fehcaEvaluarTest)
+    # tz = pytz.timezone('America/St_Johns')
+    fehcaEvaluarTest = fehcaEvaluarTest.replace(tzinfo=pytz.UTC)
+    # print("fehcaEvaluarTest 2", fehcaEvaluarTest)
+    fehcaEvaluar = fehcaEvaluarTest.astimezone(lima)
+    # print("fehcaEvaluarTest 3", fehcaEvaluar)
+    # print("fehcaEvaluar")
+    # print(fehcaEvaluar)
+    # print(datetime.now(lima))
+    # return v or datetime.now(lima)
+    return fehcaEvaluar
 
 # @app.route("/")
 # def index():
@@ -88,7 +103,16 @@ def get_seguimientoJefe():
 @app.route('/cuidappte/seguimiento/<id>', methods=['GET'])
 def get_seguimiento(id):
     if id == "all":
-        users = mongo.db.seguimiento.find()
+        args = request.args
+        fi = args["fi"]
+        ff = args["ff"]
+        # print(type(fi))
+        in_time_obj = datetime.strptime("{} 00:00:00".format(fi), '%d/%m/%Y %H:%M:%S')
+        in_time_obj = formatDate(in_time_obj) + timedelta(hours=5)
+        out_time_obj = datetime.strptime("{} 23:59:59".format(ff), '%d/%m/%Y %H:%M:%S')
+        out_time_obj = formatDate(out_time_obj) + timedelta(hours=5)
+        print("Traer datos de {} hasta {}".format(in_time_obj, out_time_obj))
+        users = mongo.db.seguimiento.find({'created_at': {"$gte": in_time_obj, "$lt": out_time_obj}})
         resp = dumps(users)
         # resp = list(users)
         # print(resp)
