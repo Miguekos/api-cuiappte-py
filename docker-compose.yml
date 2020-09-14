@@ -9,6 +9,6 @@ services:
       dockerfile: Dockerfile
     command: python3 main.py
     volumes:
-      - /usr/local/volumes/fileserver/:/app/fileserver/
+      - /usr/local/volumes/fileserver/cayman/:/app/fileserver/
     ports:
       - "9878:9878"
