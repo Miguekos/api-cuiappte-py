@@ -16,4 +16,8 @@ import controller.routeCreditos
 import controller.routeAbonos
 import controller.routeSeguimiento
 import controller.routeAsistencia
+import controller.routeDoc
+import controller.routeComunicados
+import controller.routeUtils
+import controller.routeNotificaciones
 import serverfile

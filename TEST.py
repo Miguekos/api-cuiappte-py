@@ -21,8 +21,8 @@ day = now.day
 print(year)
 print(month)
 print(day)
-
-print(now)
+now = now.strftime("%Y/%m/%d")
+print("now", now)
 asd = "2020-05-31 00:00:00"
 from_date = datetime(2020, 5, 21, 00, 00, 00, 000000)
 print(from_date)

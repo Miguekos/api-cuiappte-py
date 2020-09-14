@@ -1,24 +1,52 @@
-from app import app
-from flask import jsonify, flash, request
-from werkzeug.security import generate_password_hash, check_password_hash
-from mongo import mongo
+import collections
+from datetime import datetime, timedelta
+
 from bson.json_util import dumps
 # JSON.parse (dumps)
 from bson.objectid import ObjectId
+from flask import jsonify, request
 from flask_cors import CORS
-from pytz import timezone
-from datetime import datetime, timedelta
-import collections
+
+from app import app
+from mongo import mongo
+
 CORS(app, supports_credentials=True)
+
 
 def repararIdInput(id):
     print(id['$oid'])
     return id['$oid']
 
+def formatDate(v):
+    import pytz
+    lima = pytz.timezone('America/Lima')
+    fehcaEvaluarTest = v
+    # print("fehcaEvaluarTest", fehcaEvaluarTest)
+    # tz = pytz.timezone('America/St_Johns')
+    fehcaEvaluarTest = fehcaEvaluarTest.replace(tzinfo=pytz.UTC)
+    # print("fehcaEvaluarTest 2", fehcaEvaluarTest)
+    fehcaEvaluar = fehcaEvaluarTest.astimezone(lima)
+    # print("fehcaEvaluarTest 3", fehcaEvaluar)
+    # print("fehcaEvaluar")
+    # print(fehcaEvaluar)
+    # print(datetime.now(lima))
+    # return v or datetime.now(lima)
+    return fehcaEvaluar
+
+
 @app.route('/cuidappte/asistencia', methods=['GET'])
 def get_asistecia():
     try:
-        asist = mongo.db.asistencia.find()
+        args = request.args
+        fi = args["fi"]
+        ff = args["ff"]
+        # print(type(fi))
+        in_time_obj = datetime.strptime("{} 00:00:00".format(fi), '%d/%m/%Y %H:%M:%S')
+        in_time_obj = formatDate(in_time_obj) + timedelta(hours=5)
+        out_time_obj = datetime.strptime("{} 23:59:59".format(ff), '%d/%m/%Y %H:%M:%S')
+        out_time_obj = formatDate(out_time_obj) + timedelta(hours=5)
+        print("Traer datos de {} hasta {}".format(in_time_obj, out_time_obj))
+        asist = mongo.db.asistencia.find({'created_at': {"$gte": in_time_obj, "$lt": out_time_obj}})
         # asist["id"] = repararIdInput(asist["_id"])
         # asist.pop("_id")
         return dumps(asist)
@@ -30,27 +58,110 @@ def get_asistecia():
         }
         return jsonify(jsonResp)
 
+
+@app.route('/cuidappte/asistenciaUser', methods=['POST'])
+def get_asisteciaUser():
+    try:
+        _json = request.json
+        asist = mongo.db.asistencia.find({'jefeDirecto': _json['dni']})
+        # asist["id"] = repararIdInput(asist["_id"])
+        # asist.pop("_id")
+        return dumps(asist)
+    except ValueError:
+        print(ValueError)
+        jsonResp = {
+            "codRes": "99",
+            "message": "{}".format("Error get asistencia jefe")
+        }
+        return jsonify(jsonResp)
+
+
+@app.route('/cuidappte/asistencia/<id>', methods=['GET'])
+def get_asistecia_one(id):
+    try:
+        import pytz
+        lima = pytz.timezone('America/Lima')
+        li_time = datetime.now()
+        ini_date = li_time.strftime("%d/%m/%Y")
+        fin_date = li_time.strftime("%d/%m/%Y")
+        in_time_obj = datetime.strptime("{} 00:00:00".format(ini_date), '%d/%m/%Y %H:%M:%S')
+        out_time_obj = datetime.strptime("{} 23:59:59".format(fin_date), '%d/%m/%Y %H:%M:%S')
+        # idAsist = mongo.db.asistencia.find({"idUser": id})
+        idAsist = mongo.db.asistencia.find_one({"idUser": id, "created_at": {"$gte": in_time_obj, "$lt": out_time_obj}})
+        # asist["id"] = repararIdInput(asist["_id"])
+        # asist.pop("_id")
+        return dumps(idAsist)
+    except:
+        jsonResp = {
+            "codRes": "99",
+            "message": "{}".format("Error get documentos")
+        }
+        return jsonify(jsonResp)
+
+
 def updateAt():
     import pytz
     lima = pytz.timezone('America/Lima')
     return datetime.now(lima)
 
+
 @app.route('/cuidappte/asistencia', methods=['POST'])
 def add_asistencia():
     import pytz
     lima = pytz.timezone('America/Lima')
-    li_time = datetime.now(lima)
+    li_time = datetime.now()
     _json = request.json
     _json['idUser'] = repararIdInput(_json['_id'])
-    _json['created_at'] = li_time
-    _json['updated_at'] = li_time
     _json.pop('_id')
+
+    ini_date = li_time.strftime("%d/%m/%Y")
+    fin_date = li_time.strftime("%d/%m/%Y")
+    in_time_obj = datetime.strptime("{} 00:00:00".format(ini_date), '%d/%m/%Y %H:%M:%S')
+    out_time_obj = datetime.strptime("{} 23:59:59".format(fin_date), '%d/%m/%Y %H:%M:%S')
+
+    idAsist = mongo.db.asistencia.find(
+        {"idUser": _json['idUser'], "created_at": {"$gte": in_time_obj, "$lt": out_time_obj}})
     try:
-        id = mongo.db.asistencia.insert(_json)
-        resp = jsonify('User added successfully!')
-        resp.status_code = 200
-        return resp
+        cantAsist = len(list(idAsist))
+        print(type(cantAsist))
+        print(cantAsist)
+        if cantAsist == 0:
+            _json['created_at'] = li_time
+            _json['updated_at'] = li_time
+            _json['asistenciaEntrada'] = _json['asistencia']
+            _json.pop("asistencia")
+            print("add")
+            id = mongo.db.asistencia.insert(_json)
+            resp = jsonify('asistencia added successfully!')
+            resp.status_code = 200
+            return resp
+
+        if cantAsist == 1:
+            # fehcaEvaluarTest = _json['asistencia']['created_at']
+            # fehcaEvaluarTest = datetime.strptime(fehcaEvaluarTest, '')
+            # print(fehcaEvaluarTest)
+            # print("#############################", type(fehcaEvaluarTest))
+            # tz = pytz.timezone('America/St_Johns')
+            # fehcaEvaluarTest = fehcaEvaluarTest.replace(tzinfo=pytz.UTC)
+            # fehcaEvaluar = fehcaEvaluarTest.astimezone(lima)
+            # print(fehcaEvaluar)
+            _json['updated_at'] = li_time
+            _json['asistenciaSalida'] = _json['asistencia']
+            _json.pop("asistencia")
+            _json.pop("created_at")
+            print("update")
+            mongo.db.asistencia.update_one({'idUser': _json['idUser']},
+                                           {'$set': _json})
+            resp = jsonify('Update asistencia successfully!')
+            resp.status_code = 200
+            return resp
+        #     id = mongo.db.asistencia.insert(_json)
+        #     resp = jsonify('User added successfully!')
+        #     resp.status_code = 200
+        #     return resp
     except:
+        # except:
+        #     print(ValueError)
         jsonResp = {
             "codRes": "99",
             "message": "{}".format("Error guarando su asistencia")
@@ -63,11 +174,12 @@ def add_asistencia():
     # Converting string to list
     # print(asd)
 
+
 @app.route('/cuidappte/asistencia', methods=['PUT'])
 def put_asistencia():
     print("Consultando Creditos del ID: {}".format(id))
     user = mongo.db.asistencia.find()
-       # print(user)
+    # print(user)
     resp = dumps(user)
     # Converting string to list
     res = resp.strip('][').split(', ')
@@ -87,4 +199,3 @@ def deleteAsistencia(id):
     resp = jsonify('abono eliminado correctamente!')
     resp.status_code = 200
     return resp
-
